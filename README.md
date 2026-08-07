@@ -42,7 +42,7 @@ The build is fully static. Any static host will serve it. Routing uses query str
 
 ## Entry points
 
-There is no router library. `src/main.tsx` reads `?view` and `?step` at startup; `Publish.tsx` reads `?intent` separately when it renders.
+There is no router library. `src/main.tsx` reads `?step` at startup; `Publish.tsx` reads `?intent` separately when it renders.
 
 | URL | What you get |
 |---|---|
@@ -50,11 +50,8 @@ There is no router library. `src/main.tsx` reads `?view` and `?step` at startup;
 | `/?step=editor` | Straight into the editor with a draft |
 | `/?step=publish` | Straight to the publish screen |
 | `/?step=publish&intent=newsletter` | The publish screen in its newsletter variant |
-| `/?view=diagrams` | Explanatory diagrams of the flow |
-| `/?view=lofi` | An earlier greyscale prototype, kept for reference |
-| `/?view=smoke` | A design-language smoke test |
 
-`?view` takes priority over `?step`. Any unknown `?step` falls back to the start.
+Any unknown `?step` falls back to the start.
 
 ---
 
@@ -86,7 +83,7 @@ The **thread** is the continuity mechanism: one object, created at intake, appen
 
 | File | What it is |
 |---|---|
-| `src/main.tsx` | The entry point, and the whole of the routing. 27 lines. Read first. |
+| `src/main.tsx` | The entry point, and the whole of the routing. 20 lines. Read first. |
 | `src/hifi/Flow.tsx` | The state machine for the whole demo. Every step transition is decided here. |
 | `src/hifi/content.ts` | Most user-facing copy, all the draft data, and the fake-AI keyword matchers. The most important file. Two traps: the hero kicker and both hero buttons are hardcoded in `Canvas.tsx` and shadow the same fields in `HERO_BY_TONE`, which only the publish thumbnail reads. |
 | `src/hifi/state.ts` | The editable document and the undo history, as pure functions. No React. |
@@ -124,15 +121,12 @@ Editor parts:
 | `icons.tsx` | Six glyphs with no equivalent in the icon package |
 | `hifi.css` | Every style for every screen. 3,500 lines, navigated by section banner comments |
 
-### Other directories
+### Styles
 
 | Path | What |
 |---|---|
 | `src/theme/tokens.css` | Design tokens as CSS variables. Everything else consumes these |
 | `src/index.css` | Global entry stylesheet. Order matters — see [Traps](#traps) |
-| `src/diagrams/` | Static diagrams for the write-up. Not product UI |
-| `src/lofi/` | An earlier greyscale prototype. Shares no code with `src/hifi/` |
-| `src/App.tsx` | A design-language smoke test. Not part of the flow |
 
 ---
 
@@ -278,7 +272,7 @@ None of these would survive production. Each was a conscious trade-off for demo 
 
 ### Not addressed at all
 
-No tests, and no test runner installed. No error boundaries. No loading or error states outside the earlier greyscale prototype. No internationalisation, analytics or auth. Accessibility was handled in places — roving focus, ARIA states, live regions, reduced-motion support — but has not been audited.
+No tests, and no test runner installed. No error boundaries. No loading or error states. No internationalisation, analytics or auth. Accessibility was handled in places — roving focus, ARIA states, live regions, reduced-motion support — but has not been audited.
 
 ---
 
