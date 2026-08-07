@@ -1,0 +1,72 @@
+/*
+ * Design tokens — WordPress.com / Automattic language
+ * Palette source: @automattic/color-studio (Color Studio)
+ * See docs/10-research.md §4 for provenance and exact hex values.
+ * Flat surfaces only — no gradients, no glassmorphism.
+ */
+
+:root {
+  /* --- Brand: WordPress Blue --- */
+  --wp-blue-50: #3858e9; /* brand anchor */
+  --wp-blue-hover: #2a46ce;
+  --wp-blue-deep: #1d35b4;
+  --wp-blue-tint: #f7f8fe; /* faint wash */
+  --wp-blue-light: #d6ddf9; /* borders, subtle fills */
+
+  /* --- Accent / status (Color Studio 50s) --- */
+  --green-50: #008a20; /* success */
+  --celadon-50: #008763;
+  --red-50: #d63638; /* error */
+  --yellow-50: #9d6e00;
+  --orange-50: #b26200;
+  --purple-50: #984a9c; /* accent only; Woo moments use Woo Purple, not WP Blue */
+
+  /* --- Neutral gray ramp (Color Studio Gray) --- */
+  --gray-0: #ffffff;
+  --gray-5: #f6f7f7;
+  --gray-10: #e9ecef;
+  --gray-20: #d0d5da;
+  --gray-30: #a7aaad;
+  --gray-40: #8c8f94;
+  --gray-50: #646970;
+  --gray-60: #50575e;
+  --gray-70: #3c434a;
+  --gray-80: #2c3338;
+  --gray-90: #1d2327;
+  --gray-100: #101517;
+
+  /* --- Semantic surfaces --- */
+  --color-bg: var(--gray-0);
+  --color-surface: var(--gray-0);
+  --color-border: var(--gray-10);
+  --color-text: var(--gray-90);
+  --color-text-muted: var(--gray-50);
+  --color-link: var(--wp-blue-50);
+
+  /* --- Radii — soft, moderate (8–16px). Not pill, not sharp. --- */
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-2xl: 16px;
+
+  /* --- Spacing — generous editorial whitespace --- */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 40px;
+  --space-2xl: 64px;
+
+  /* --- Type --- */
+  /* Display face. Recoleta (Latinotype) is what WordPress.com uses; it is a
+     licensed font and is not redistributed here, so it is listed first and used
+     automatically once its files are added. Fraunces (SIL OFL) ships as the
+     stand-in. See README, "Fonts and images". */
+  --font-display: 'Recoleta', 'Fraunces', ui-serif, Georgia, 'Times New Roman', serif;
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', 'Inter',
+    Roboto, Helvetica, Arial, sans-serif;
+
+  /* --- Elevation — restrained, flat feel --- */
+  --shadow-sm: 0 1px 2px rgba(29, 35, 39, 0.06);
+  --shadow-md: 0 2px 8px rgba(29, 35, 39, 0.08);
+}

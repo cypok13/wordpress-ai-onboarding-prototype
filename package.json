@@ -1,0 +1,32 @@
+{
+  "name": "wordpress-ai-onboarding-prototype",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "oxlint",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@automattic/color-studio": "^4.1.0",
+    "@wordpress/components": "^37.0.0",
+    "@wordpress/icons": "^15.2.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.2",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^6.0.3",
+    "oxlint": "^1.71.0",
+    "typescript": "~6.0.2",
+    "vite": "^8.1.1"
+  },
+  "description": "A coded design prototype of an AI-first onboarding flow for WordPress.com.",
+  "engines": {
+    "node": ">=20.19"
+  }
+}

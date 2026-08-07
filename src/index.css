@@ -1,0 +1,68 @@
+/* @import MUST come before any other rule (incl. @font-face) — else it's dropped. */
+/* Real @wordpress/components styles — required for faithful rendering */
+@import '@wordpress/components/build-style/style.css';
+/* Design tokens */
+@import './theme/tokens.css';
+
+/* Recoleta is a licensed commercial typeface and is NOT redistributed here.
+   The display font therefore falls back to a system serif. To render exactly as
+   designed, license Recoleta, put the files in public/fonts/ and restore the
+   @font-face rules — see README, "Fonts and images". */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: var(--color-link);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Focus ring only for KEYBOARD focus. The DS <Button> (and native buttons) keep
+   a blue focus box-shadow/outline on :focus that PERSISTS after a MOUSE click —
+   so a clicked button looks "stuck" selected. Scoping the ring to :focus-visible
+   drops it after a mouse click while keeping it for keyboard users (a11y intact).
+   Global, app-wide fix. `.is-pressed` (toggle state) is untouched. */
+.components-button:focus:not(:focus-visible),
+button:focus:not(:focus-visible),
+[role='button']:focus:not(:focus-visible),
+[role='radio']:focus:not(:focus-visible),
+[role='checkbox']:focus:not(:focus-visible) {
+  box-shadow: none;
+  outline: none;
+}

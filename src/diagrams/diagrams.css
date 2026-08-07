@@ -1,0 +1,783 @@
+/*
+ * Presentation diagrams — WordPress.com design language.
+ * Communication artifacts for the trial P2 post (not product UI).
+ * Flat surfaces, subtle 1px borders, soft radii, restrained shadows.
+ * Blue (#3858e9) used sparingly — highlight the key node only.
+ */
+
+.dg-page {
+  background: var(--gray-0);
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 56px;
+  font-family: var(--font-sans);
+  color: var(--gray-90);
+}
+
+.dg-frame {
+  background: var(--gray-0);
+  border: 1px solid var(--gray-10);
+  border-radius: var(--radius-2xl);
+  padding: 56px 64px 52px;
+}
+
+/* --- Titles --- */
+.dg-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--gray-100);
+  letter-spacing: -0.015em;
+  text-align: center;
+  line-height: 1.1;
+}
+.dg-title--a {
+  font-size: 34px;
+}
+.dg-title--b {
+  font-size: 32px;
+}
+.dg-title__kicker {
+  display: block;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--wp-blue-50);
+  margin-bottom: 14px;
+}
+
+/* --- Shared node shells --- */
+.dg-node {
+  background: var(--gray-0);
+  border: 1px solid var(--gray-20);
+  border-radius: var(--radius-lg);
+  padding: 16px 20px;
+  text-align: center;
+}
+.dg-node__label {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 17px;
+  line-height: 1.15;
+  color: var(--gray-100);
+  letter-spacing: -0.01em;
+}
+.dg-node__sub {
+  font-size: 12.5px;
+  line-height: 1.35;
+  color: var(--gray-50);
+  margin-top: 6px;
+}
+
+/* Highlighted hero node — the only blue-filled surface */
+.dg-node--hero {
+  background: var(--wp-blue-50);
+  border-color: var(--wp-blue-50);
+  box-shadow: 0 4px 14px rgba(56, 88, 233, 0.22);
+  padding: 20px 24px;
+}
+.dg-node--hero .dg-node__label {
+  color: #ffffff;
+  font-size: 19px;
+}
+.dg-node--hero .dg-node__sub {
+  color: rgba(255, 255, 255, 0.86);
+  margin-top: 7px;
+}
+
+/* Intent capsule — rounded rect, not the hero (hero = blue node) */
+.dg-pill {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  background: var(--wp-blue-tint);
+  border: 1.5px solid var(--wp-blue-light);
+  border-radius: var(--radius-2xl);
+  padding: 18px 32px;
+}
+.dg-pill__label {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 22px;
+  letter-spacing: 0.02em;
+  color: var(--wp-blue-deep);
+}
+.dg-pill__sub {
+  font-size: 12px;
+  color: var(--gray-50);
+  letter-spacing: 0.01em;
+}
+
+/* Fork glyph */
+.dg-fork {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+/* Money tag */
+.dg-money {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--gray-0);
+  border: 1px solid var(--green-50);
+  color: var(--green-50);
+  font-size: 12px;
+  font-weight: 700;
+  font-family: var(--font-sans);
+  line-height: 1;
+}
+
+.dg-caption {
+  text-align: center;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--gray-50);
+  font-style: italic;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+/* ===================================================== */
+/* DIAGRAM A — left → right flow                          */
+/* ===================================================== */
+.dgA {
+  width: 1280px;
+}
+.dgA__flow {
+  display: grid;
+  grid-template-columns: 320px 44px 1fr;
+  align-items: center;
+  gap: 0;
+  margin-top: 44px;
+}
+
+/* Entry clusters (left) */
+.dgA__doors {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+.dg-cluster__label {
+  font-size: 12px;
+  line-height: 1.4;
+  font-weight: 600;
+  color: var(--gray-60);
+  margin-bottom: 10px;
+}
+.dg-cluster__label b {
+  color: var(--wp-blue-deep);
+  font-weight: 700;
+}
+.dg-cluster__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.dg-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 14px;
+  border: 1px solid var(--gray-10);
+  border-radius: 999px;
+  background: var(--gray-5);
+  color: var(--gray-60);
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.dg-cluster--default .dg-chip {
+  border-color: var(--wp-blue-light);
+  background: var(--wp-blue-tint);
+  color: var(--wp-blue-deep);
+}
+
+/* Converge arrows column */
+.dgA__converge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Right spine of the flow */
+.dgA__spine {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+.dgA__stage {
+  flex: 1 1 0;
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+.dgA__arrow {
+  flex: 0 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.dgA__stage .dg-node,
+.dgA__stage .dg-pill {
+  position: relative;
+}
+
+/* money tag positioned on a node */
+.dg-money-anchor {
+  position: absolute;
+  top: -11px;
+  right: -11px;
+}
+
+/* INTENT stage holds the primary spine pill + a secondary muted branch below it */
+.dgA__stage--intent {
+  align-self: center;
+}
+.dgA__secondary {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 220px;
+}
+
+/* Muted node — the expert-door shortcut (no AI generation) */
+.dg-node--muted {
+  border-style: dashed;
+  border-color: var(--gray-20);
+  background: var(--gray-5);
+  padding: 12px 16px;
+}
+.dg-node--muted .dg-node__label {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 13.5px;
+  color: var(--gray-60);
+  letter-spacing: 0;
+}
+.dg-node--muted .dg-node__sub {
+  font-size: 11.5px;
+  color: var(--gray-40);
+  font-style: italic;
+}
+
+/* Primary AI node — emphasized as the default path */
+.dg-node--primary {
+  border-color: var(--wp-blue-light);
+  box-shadow: 0 2px 10px rgba(56, 88, 233, 0.12);
+}
+.dg-node__flag {
+  display: inline-block;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 9.5px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--wp-blue-50);
+  margin-bottom: 4px;
+}
+
+.dgA__caption {
+  margin-top: 92px;
+}
+
+/* ===================================================== */
+/* DIAGRAM B — top → two columns                          */
+/* ===================================================== */
+.dgB {
+  width: 900px;
+}
+.dgB__top {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+.dgB__branch {
+  display: flex;
+  justify-content: center;
+  height: 44px;
+}
+.dgB__cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  margin-top: 4px;
+}
+.dgB__col {
+  border: 1px solid var(--gray-10);
+  border-radius: var(--radius-2xl);
+  background: var(--gray-0);
+  padding: 26px 24px 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.dgB__persona {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 19px;
+  letter-spacing: -0.01em;
+  color: var(--gray-100);
+  text-align: center;
+}
+.dgB__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  justify-content: center;
+  margin-top: 14px;
+}
+.dg-chip--sm {
+  padding: 5px 11px;
+  font-size: 12px;
+}
+.dgB__chip-arrow {
+  margin: 12px 0 4px;
+}
+.dgB__stack {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  width: 100%;
+  margin-top: 6px;
+}
+.dg-block {
+  border: 1px solid var(--gray-20);
+  border-radius: var(--radius-md);
+  background: var(--gray-5);
+  padding: 11px 14px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--gray-80);
+}
+.dg-block--dashed {
+  border-style: dashed;
+  border-color: var(--gray-30);
+  background: var(--gray-0);
+  color: var(--gray-40);
+}
+.dg-block__hint {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--gray-40);
+  margin-top: 3px;
+  font-style: italic;
+}
+.dgB__badge {
+  margin-top: 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 15px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+.dgB__badge--ai {
+  background: var(--wp-blue-50);
+  color: #ffffff;
+}
+.dgB__badge--bridge {
+  background: var(--gray-0);
+  border: 1px solid var(--gray-20);
+  color: var(--gray-60);
+}
+.dgB__badge .dg-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: currentColor;
+  opacity: 0.85;
+}
+.dgB__caption {
+  margin-top: 40px;
+}
+
+/* ===================================================== */
+/* DIAGRAM C — one entry, routed by intent                */
+/* ===================================================== */
+.dgC {
+  width: 1240px;
+}
+
+/* --- shared vertical rhythm ---
+   Two paths (rows) 96px apart, converge SVG maps rows y=56/152 → center 100.
+   Every column uses the same 200px block so rows align edge-to-edge. */
+.dgC__flow {
+  display: grid;
+  grid-template-columns: 260px 300px 64px 1fr;
+  align-items: center;
+  margin-top: 44px;
+}
+
+/* Left — two equal entry contexts */
+.dgC__entries {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 56px;
+  height: 200px;
+}
+.dgC__entry {
+  text-align: left;
+  padding: 14px 18px;
+  min-height: 72px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.dgC__entry .dg-node__label {
+  font-size: 16px;
+}
+
+/* Middle — intent gate, two rows aligned to the entry-card centers */
+.dgC__gate {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 56px;
+  height: 200px;
+  padding-left: 4px;
+}
+.dgC__gate-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 72px;
+}
+.dgC__gate-row--skip {
+  justify-content: flex-start;
+}
+.dgC__ask {
+  flex: 1 1 0;
+  text-align: left;
+}
+.dgC__ask .dg-node__label {
+  font-size: 14px;
+}
+.dgC__skip-label {
+  flex: 1 1 0;
+  font-size: 12px;
+  font-style: italic;
+  color: var(--gray-50);
+  white-space: nowrap;
+}
+
+/* Converge column — SVG is 200px tall, centered on the rail row */
+.dgC__converge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Shared rail — uniform nodes on one centered row */
+.dgC__rail {
+  display: flex;
+  align-items: center;
+}
+.dgC__stage {
+  flex: 1 1 0;
+  display: flex;
+  justify-content: center;
+}
+.dgC__arrow {
+  flex: 0 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.dgC__node {
+  width: 100%;
+  height: 68px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.dgC__node .dg-node__label {
+  font-size: 15px;
+}
+.dgC__node .dg-node__sub {
+  font-size: 11.5px;
+  margin-top: 4px;
+}
+
+/* Prompt — the single shared entry, emphasized in brand blue.
+   Same box size as siblings; only the accent differs. */
+.dgC__node--prompt {
+  border-color: var(--wp-blue-50);
+  box-shadow: 0 2px 10px rgba(56, 88, 233, 0.14);
+}
+.dgC__node--prompt .dg-node__label {
+  color: var(--wp-blue-deep);
+}
+.dgC__node--prompt .dg-node__sub {
+  white-space: nowrap;
+}
+
+/* Downstream-branch note — centered full-width-ish muted callout */
+.dgC__note {
+  margin: 28px auto 0;
+  max-width: 640px;
+  border: 1px dashed var(--gray-30);
+  border-radius: var(--radius-md);
+  background: var(--gray-5);
+  padding: 11px 20px;
+  text-align: center;
+  font-size: 12px;
+  font-style: italic;
+  color: var(--gray-50);
+}
+
+.dgC__caption {
+  margin-top: 24px;
+}
+
+/* ===================================================== */
+/* DIAGRAM D — one entry, intent-aware (cold vs carried)  */
+/* Two rows share the same skeleton; the "ask" step is    */
+/* present in row 1, bypassed in row 2.                   */
+/* ===================================================== */
+.dgD {
+  width: 1280px;
+}
+.dgD__subtitle {
+  margin-top: 12px;
+  font-style: normal;
+  color: var(--gray-60);
+  font-size: 14px;
+}
+.dgD__grid {
+  display: flex;
+  flex-direction: column;
+  margin-top: 40px;
+}
+
+/* one row = a labeled band + the horizontal flow */
+.dgD__row {
+  display: grid;
+  grid-template-columns: 186px 1fr;
+  align-items: center;
+  gap: 28px;
+}
+.dgD__divider {
+  height: 1px;
+  background: var(--gray-10);
+  margin: 30px 0;
+}
+
+/* row label (left rail) */
+.dgD__rowhead {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.dgD__rowtag {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 6px 13px;
+  border-radius: 999px;
+  background: var(--wp-blue-tint);
+  border: 1px solid var(--wp-blue-light);
+  color: var(--wp-blue-deep);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.dgD__rowtag--known {
+  background: var(--gray-5);
+  border-color: var(--gray-20);
+  color: var(--gray-60);
+}
+.dgD__rowsub {
+  font-size: 12px;
+  line-height: 1.35;
+  color: var(--gray-50);
+  font-style: italic;
+}
+
+/* horizontal flow body */
+.dgD__body {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+.dgD__entry {
+  width: 168px;
+  flex: 0 0 auto;
+}
+.dgD__entry .dg-node__label {
+  font-size: 16px;
+}
+.dgD__arrow {
+  flex: 0 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* the two parallel paths (AI + manual), stacked. Each path keeps its OWN
+   outcome — they no longer merge into a single shared node. */
+.dgD__paths {
+  position: relative;
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+}
+.dgD__path {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.dgD__pathtag {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 9.5px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--gray-40);
+}
+
+/* one path leg: ask node → arrow → that path's own outcome */
+.dgD__leg {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+}
+.dgD__legarrow {
+  flex: 0 0 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dgD__ask {
+  flex: 0 0 236px;
+  padding: 12px 16px;
+  text-align: left;
+  min-height: 66px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.dgD__ask .dg-node__label {
+  font-size: 14px;
+}
+.dgD__ask .dg-node__sub {
+  margin-top: 4px;
+  font-size: 11.5px;
+}
+
+/* the ASK is present in full — subtle emphasis */
+.dgD__ask--on {
+  border-color: var(--gray-20);
+  background: var(--gray-0);
+}
+.dgD__ask--on .dg-node__label {
+  color: var(--gray-100);
+}
+
+/* the ASK is TRIMMED (one step removed, not skipped whole) — kept live,
+   dashed-left accent + a small "type step skipped" stamp. */
+.dgD__ask--trim {
+  border-color: var(--gray-20);
+  background: var(--gray-0);
+  border-left: 3px dashed var(--wp-blue-light);
+}
+.dgD__ask--trim .dg-node__label {
+  color: var(--gray-100);
+}
+
+/* the ASK is bypassed entirely — greyed, dashed, stamped "skipped" */
+.dgD__ask--off {
+  position: relative;
+  border-style: dashed;
+  border-color: var(--gray-20);
+  background: var(--gray-5);
+  overflow: hidden;
+}
+.dgD__ask--off .dg-node__label {
+  color: var(--gray-40);
+  text-decoration: line-through;
+  text-decoration-color: var(--gray-30);
+}
+.dgD__skipstamp {
+  margin-top: 5px;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gray-40);
+}
+
+/* per-path outcome nodes — distinct AI vs manual outcomes */
+.dgD__outcome {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 12px 16px;
+}
+.dgD__outcome .dg-node__label {
+  font-size: 14px;
+}
+.dgD__outcome .dg-node__sub {
+  margin-top: 4px;
+  font-size: 11.5px;
+}
+/* manual outcome reads as "prepared flow" — quiet, not the AI hero accent */
+.dgD__outcome--manual {
+  border-color: var(--gray-20);
+  background: var(--gray-0);
+}
+
+.dgD__caption {
+  margin-top: 52px;
+}
+
+/* --- E: the plain four-step spine --- */
+.dgE__row {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  margin-top: 36px;
+}
+.dgE__step {
+  display: flex;
+  align-items: center;
+}
+.dgE__node {
+  width: 208px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.dgE__arrow {
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+}

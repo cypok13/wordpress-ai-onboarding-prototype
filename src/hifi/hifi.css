@@ -1,0 +1,3545 @@
+/* Hi-fi "Make it yours" — real Agentic UI: Gutenberg editor + docked
+   conversational AI chat. Tokens matched to the real Figma (node 473:4728):
+   SF Pro system font, #2d5af2 primary, #e9e9e9 surfaces. Recoleta lives only
+   in the site content (serif hero), never in chrome or chat. */
+
+.hf {
+  /* --- Figma-matched chrome/chat tokens (scoped to the hi-fi) --- */
+  --c-primary: #2d5af2;
+  --c-primary-hover: #244ad6;
+  --c-text: #1f1f1f;
+  --c-text-2: #757575;
+  --c-border: #e9e9e9;
+  --c-bubble: #e9e9e9;
+  --c-input-bg: #fcfcfc;
+  --c-surface: #ffffff;
+  --c-hover: #f2f2f2;
+  --font-ui:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro', 'Segoe UI',
+    Roboto, Helvetica, Arial, sans-serif;
+
+  --hf-topbar-h: 48px;
+  --hf-chat-w: 322px;
+  height: 100vh;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  background: var(--c-surface);
+  color: var(--c-text);
+  font-family: var(--font-ui);
+  overflow: hidden;
+}
+
+/* ---------- Top bar (real element order) ---------- */
+.hf-topbar {
+  height: var(--hf-topbar-h);
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 8px 0 0;
+  background: var(--c-surface);
+  border-bottom: 1px solid var(--c-border);
+  z-index: 30;
+}
+.hf-tb-left,
+.hf-tb-right,
+.hf-tb-group,
+.hf-tb-cluster {
+  display: flex;
+  align-items: center;
+}
+.hf-tb-left {
+  gap: 4px;
+}
+.hf-tb-right {
+  gap: 6px;
+}
+.hf-tb-group,
+.hf-tb-cluster {
+  gap: 2px;
+}
+.hf-tb-cluster {
+  margin-right: 4px;
+}
+
+/* WP logo — black square, real WordPress mark rendered white via mask.
+   On hover/focus the mark cross-fades into a back-arrow ("start over") and a
+   dark pill tooltip appears beside it. */
+.hf-tb-logo {
+  position: relative;
+  width: var(--hf-topbar-h);
+  height: var(--hf-topbar-h);
+  display: grid;
+  place-items: center;
+  background: #1f1f1f;
+  border: none;
+  cursor: pointer;
+  transition: background 180ms ease;
+}
+.hf-tb-logo:focus-visible {
+  outline: none;
+}
+/* On hover/focus the black square vanishes so the grey inset hover square + the
+   ↖ back-arrow read on the white top-bar (not on black). At rest the logo stays
+   the normal black WP square. */
+.hf-tb-logo:hover,
+.hf-tb-logo:focus-visible {
+  background: transparent;
+}
+/* Grey rounded hover square — inset a few px inside the black logo square, so it
+   reads slightly smaller than the original (matches the real Gutenberg glyph
+   swap). Sits behind the cross-fading mark/back-arrow. */
+.hf-tb-logo::after {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border-radius: 4px;
+  /* Dark-tinted grey so it reads on the white top-bar once the black bg is gone. */
+  background: rgba(0, 0, 0, 0.08);
+  opacity: 0;
+  transition: opacity 180ms ease;
+  pointer-events: none;
+}
+.hf-tb-logo:hover::after,
+.hf-tb-logo:focus-visible::after {
+  opacity: 1;
+}
+.hf-tb-logo__mark,
+.hf-tb-logo__back {
+  grid-area: 1 / 1;
+  position: relative;
+  z-index: 1;
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+.hf-tb-logo__mark {
+  width: 24px;
+  height: 24px;
+  background: #fff;
+  -webkit-mask: url('/wordpress.svg') center / contain no-repeat;
+  mask: url('/wordpress.svg') center / contain no-repeat;
+}
+.hf-tb-logo__back {
+  display: grid;
+  place-items: center;
+  /* Dark glyph — visible on the white top-bar after the black bg is hidden. */
+  color: #1e1e1e;
+  opacity: 0;
+  transform: scale(0.7) translateX(3px);
+}
+.hf-tb-logo:hover .hf-tb-logo__mark,
+.hf-tb-logo:focus-visible .hf-tb-logo__mark {
+  opacity: 0;
+  transform: scale(0.7) translateX(-3px);
+}
+.hf-tb-logo:hover .hf-tb-logo__back,
+.hf-tb-logo:focus-visible .hf-tb-logo__back {
+  opacity: 1;
+  transform: scale(1) translateX(0);
+}
+/* Dark rounded pill tooltip, WP-style */
+.hf-tb-logo__tip {
+  position: absolute;
+  left: calc(100% + 8px);
+  top: 50%;
+  transform: translateY(-50%) translateX(-4px);
+  padding: 4px 8px;
+  background: #1f1f1f;
+  color: #fff;
+  font-size: 12px;
+  line-height: 1;
+  white-space: nowrap;
+  border-radius: 4px;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease;
+  z-index: 40;
+}
+.hf-tb-logo:hover .hf-tb-logo__tip,
+.hf-tb-logo:focus-visible .hf-tb-logo__tip {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+
+/* Inserter — blue-tinted square. DS <Button> owns the primitive; these rules
+   override the .components-button base so the bespoke blue square is preserved. */
+.hf-tb-inserter.hf-tb-inserter {
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  margin-left: 4px;
+  background: var(--c-primary);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.hf-tb-inserter.hf-tb-inserter:hover:not(:disabled) {
+  background: var(--c-primary-hover);
+  color: #fff;
+}
+
+/* Generic icon button (undo/redo/list-view/cluster/kebab). DS <Button> supplies
+   the glyph + focus ring + radius; these rules constrain it to the 34px chrome
+   square and the local hover colour. */
+.hf-tb-btn.hf-tb-btn {
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: none;
+  background: transparent;
+  color: var(--c-text);
+  border-radius: 6px;
+  cursor: pointer;
+}
+.hf-tb-btn.hf-tb-btn:hover:not(:disabled) {
+  background: var(--c-hover);
+  color: var(--c-text);
+}
+.hf-tb-btn.hf-tb-btn:disabled,
+.hf-tb-btn.hf-tb-btn[aria-disabled='true'] {
+  color: #c7c7c7;
+  cursor: default;
+}
+.hf-tb-btn svg {
+  display: block;
+}
+/* Active/pressed sidebar toggle — DS `isPressed` dark state: near-black fill +
+   white glyph (matches the real Gutenberg settings-sidebar toggle). */
+.hf-tb-btn--active,
+.hf-topbar .hf-tb-btn.is-pressed:not(:disabled) {
+  background: #1f1f1f;
+  color: #fff;
+}
+.hf-tb-btn--active:hover:not(:disabled),
+.hf-topbar .hf-tb-btn.is-pressed:not(:disabled):hover {
+  background: #000;
+  color: #fff;
+}
+.hf-topbar .hf-tb-btn.is-pressed:not(:disabled) svg {
+  fill: #fff;
+}
+/* Jetpack mark has no DS icon — bespoke IconJetpack glyph (green round mark with
+   the white Jetpack sails), matching the real Jetpack logo. Explicit fills live
+   in the SVG, so the button must not tint it. */
+.hf-tb-btn--jetpack.hf-tb-btn--jetpack svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* Center document pill — DS <Button> with local pill styling */
+.hf-tb-docpill.hf-tb-docpill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  min-width: 0;
+  padding: 0 10px;
+  border: none;
+  border-radius: 6px;
+  background: var(--c-hover);
+  color: var(--c-text);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 400;
+  cursor: pointer;
+}
+/* Hover matches the real editor: the pill fills with grey, no ring and no
+   border — it reads as one pressable bar rather than a bordered control. */
+.hf-tb-docpill.hf-tb-docpill:hover:not(:disabled),
+.hf-tb-docpill.hf-tb-docpill[aria-expanded='true'] {
+  background: var(--gray-10);
+  color: var(--c-text);
+  box-shadow: none;
+}
+.hf-tb-docpill__chevron {
+  margin-left: -2px;
+  color: var(--c-text-2);
+}
+.hf-tb-docpill.hf-tb-docpill:hover .hf-tb-docpill__chevron {
+  color: var(--c-text);
+}
+.hf-tb-docpill svg {
+  color: var(--c-text-2);
+}
+.hf-tb-docpill__name {
+  font-weight: 400;
+  color: var(--c-text);
+}
+.hf-tb-docpill__sep,
+.hf-tb-docpill__meta {
+  color: var(--c-text-2);
+}
+.hf-tb-docpill__kbd {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  margin-left: 4px;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--c-border);
+  color: var(--c-text-2);
+  font-size: 11px;
+}
+.hf-tb-docpill__kbd svg {
+  color: var(--c-text-2);
+}
+
+/* Save (ghost, disabled) + Launch (primary) — DS <Button> variants, restyled
+   to the local chrome height/colour. Border-radius now inherits the DS scale. */
+.hf-tb-save.hf-tb-save {
+  height: 32px;
+  padding: 0 12px;
+  border: none;
+  background: transparent;
+  color: #c7c7c7;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: default;
+}
+.hf-tb-launch.hf-tb-launch {
+  height: 32px;
+  padding: 0 16px;
+  border: none;
+  background: var(--c-primary);
+  color: #fff;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 590;
+  cursor: pointer;
+}
+.hf-tb-launch.hf-tb-launch:hover:not(:disabled) {
+  background: var(--c-primary-hover);
+  color: #fff;
+}
+.hf-tb-launch.hf-tb-launch:disabled,
+.hf-tb-launch.hf-tb-launch[aria-disabled='true'] {
+  background: #c4cdf0;
+  color: #fff;
+  cursor: default;
+  opacity: 1;
+}
+
+/* ---------- Shell: canvas (left) + chat (right), inside the window card ---------- */
+.hf-shell {
+  flex: 1 1 auto;
+  display: flex;
+  min-height: 0;
+  background: var(--c-surface);
+}
+
+/* Canvas fills to the card's left edge; the site scrolls inside it. The chat's
+   left border is the divider between canvas and chat. */
+.hf-canvas-wrap {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: var(--gray-0);
+  scrollbar-gutter: stable;
+}
+
+.hf-canvas {
+  width: 100%;
+  background: var(--gray-0);
+  overflow: hidden;
+}
+
+/* ---------- Site header / nav (rendered site chrome — serif brand) ---------- */
+.hf-sitenav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 56px;
+  border-bottom: 1px solid var(--gray-5);
+}
+.hf-sitenav__brand {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 20px;
+  letter-spacing: 0.02em;
+  color: var(--gray-100);
+}
+.hf-sitenav__links {
+  display: flex;
+  gap: 28px;
+}
+.hf-sitenav__link {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--gray-70);
+}
+.hf-sitenav__link.is-current {
+  color: var(--gray-100);
+}
+
+/* ---------- Blocks ---------- */
+.hf-block {
+  position: relative;
+  padding: 56px 56px;
+  border: 2px solid transparent;
+  border-radius: 4px;
+  outline: none;
+  cursor: default;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+.hf-block + .hf-block {
+  border-top: 1px solid var(--gray-5);
+}
+.hf-block.is-revealed {
+  border-color: #c4cdf0;
+}
+.hf-block.is-selected {
+  border-color: var(--c-primary);
+  box-shadow: 0 0 0 3px rgba(45, 90, 242, 0.14);
+}
+.hf-block:focus-visible {
+  border-color: var(--c-primary);
+  box-shadow: 0 0 0 3px rgba(45, 90, 242, 0.18);
+}
+
+/* Provenance chip — hidden at rest (clean canvas), revealed on hover/focus.
+   The provenance LOGIC (ai → edited flip) is unchanged; only rendering is gated. */
+.hf-prov {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 24px;
+  padding: 0 9px;
+  border-radius: 999px;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  border: 1px solid var(--c-border);
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: saturate(1.2) blur(2px);
+  color: var(--c-text-2);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 120ms ease;
+}
+.hf-block.is-revealed .hf-prov,
+.hf-block.is-selected .hf-prov,
+.hf-block:focus-within .hf-prov,
+.hf-block:focus-visible .hf-prov {
+  opacity: 1;
+}
+.hf-prov--edited {
+  border-color: #c4cdf0;
+  background: #eef2ff;
+  color: var(--c-primary-hover);
+}
+.hf-prov svg {
+  display: block;
+  flex: 0 0 auto;
+}
+
+/* content transition when a block re-renders from a steer */
+.hf-anim {
+  animation: hf-fade-up 320ms ease;
+}
+@keyframes hf-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---------- Between-blocks inserter (real Gutenberg gap affordance) ----------
+   Sits on the boundary between two adjacent blocks; occupies zero layout height
+   and centers its affordances on the seam. Hidden at rest — clean canvas.
+   Non-interactive stub (the "+" opens nothing). */
+.hf-inserter {
+  position: relative;
+  height: 0;
+  z-index: 15;
+}
+/* Zero-layout hover band straddling the seam, so the affordance reveals when
+   the pointer approaches the boundary (as in the real Gutenberg inserter). */
+.hf-inserter::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -11px;
+  height: 22px;
+}
+/* State 1 — hover the gap: blue insertion line spanning the content width. */
+.hf-inserter__line {
+  position: absolute;
+  left: 56px;
+  right: 56px;
+  top: -1px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--c-primary);
+  opacity: 0;
+  transition: opacity 100ms ease;
+  pointer-events: none;
+}
+.hf-inserter:hover .hf-inserter__line {
+  opacity: 1;
+}
+/* Small blue rounded-square "+" centered on the line (white glyph). */
+.hf-inserter__btn {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translate(-50%, -50%);
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+  background: var(--c-primary);
+  color: #ffffff;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 100ms ease, background 100ms ease;
+}
+.hf-inserter:hover .hf-inserter__btn {
+  opacity: 1;
+}
+.hf-inserter__btn svg {
+  display: block;
+  fill: currentColor;
+}
+/* State 2 — hover the "+" itself: turns dark + "Add block" tooltip below. */
+.hf-inserter__btn:hover {
+  background: #1e1e1e;
+}
+.hf-inserter__tip {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 8px;
+  border-radius: 2px;
+  background: #1e1e1e;
+  color: #ffffff;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  line-height: 1.4;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 80ms ease;
+}
+.hf-inserter__btn:hover .hf-inserter__tip {
+  opacity: 1;
+}
+/* Open state — keep the line + "+" (now "×") visible while the popover is up. */
+.hf-inserter.is-open .hf-inserter__line,
+.hf-inserter.is-open .hf-inserter__btn {
+  opacity: 1;
+}
+.hf-inserter.is-open .hf-inserter__btn {
+  background: #1e1e1e;
+}
+
+/* ---------- Quick-inserter popover (3 block suggestions + Browse all) ---------- */
+.hf-quick {
+  width: 260px;
+  padding: 12px;
+  font-family: var(--font-ui);
+}
+.hf-quick__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.hf-quick__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 4px;
+  border: 1px solid var(--c-border, #e0e0e0);
+  border-radius: 4px;
+  background: #ffffff;
+}
+.hf-quick__icon {
+  display: grid;
+  place-items: center;
+  color: #1e1e1e;
+}
+.hf-quick__icon svg {
+  display: block;
+  fill: currentColor;
+}
+.hf-quick__label {
+  font-size: 12px;
+  line-height: 1.3;
+  color: #1e1e1e;
+}
+.hf-quick__browse {
+  width: 100%;
+  justify-content: center;
+}
+
+/* ---------- Hero block (two-column: copy left, image right) ---------- */
+.hf-hero {
+  padding: 72px 56px;
+}
+.hf-hero__grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 48px;
+  align-items: center;
+}
+.hf-hero__copy {
+  min-width: 0;
+}
+.hf-hero__kicker {
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--wp-blue-50);
+  margin-bottom: 18px;
+}
+.hf-hero__headline {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 68px;
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+  color: var(--gray-100);
+  margin-bottom: 22px;
+  outline: none;
+}
+.hf-hero__subhead {
+  font-size: 20px;
+  line-height: 1.6;
+  color: var(--gray-60);
+  max-width: 40ch;
+  margin-bottom: 34px;
+}
+.hf-hero__ctas {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.hf-hero__media {
+  min-width: 0;
+}
+.hf-hero__img {
+  display: block;
+  width: 100%;
+  height: 440px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+.hf-btn-primary {
+  height: 46px;
+  padding: 0 22px;
+  border: none;
+  border-radius: 8px;
+  background: var(--wp-blue-50);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.hf-btn-primary:hover {
+  background: var(--wp-blue-hover);
+}
+.hf-btn-ghost {
+  height: 46px;
+  padding: 0 20px;
+  border: 1px solid var(--gray-20);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--gray-80);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.hf-btn-ghost:hover {
+  border-color: var(--gray-40);
+}
+.hf-hero--v1 {
+  background: var(--wp-blue-tint);
+}
+
+/* ---------- About block ---------- */
+.hf-about__heading {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 38px;
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+  color: var(--gray-100);
+  margin-bottom: 18px;
+}
+.hf-about__body {
+  font-size: 19px;
+  line-height: 1.7;
+  color: var(--gray-60);
+  max-width: 60ch;
+  outline: none;
+}
+.hf-about--v1 {
+  border-left: 3px solid var(--wp-blue-light);
+  padding-left: 45px;
+}
+
+/* ---------- Section heading (shared) ---------- */
+.hf-h2 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 32px;
+  letter-spacing: -0.015em;
+  color: var(--gray-100);
+  margin-bottom: 26px;
+}
+
+/* ---------- Classes ---------- */
+.hf-classes__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.hf-classcard {
+  padding: 20px 22px;
+  border: 1px solid var(--gray-10);
+  border-radius: 12px;
+  background: var(--gray-0);
+}
+.hf-classcard__title {
+  font-weight: 600;
+  font-size: 17px;
+  color: var(--gray-90);
+  margin-bottom: 4px;
+}
+.hf-classcard__desc {
+  font-size: 15px;
+  color: var(--gray-50);
+  line-height: 1.5;
+}
+.hf-classes--v1 .hf-classes__grid {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* ---------- Schedule ---------- */
+.hf-schedule__rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid var(--gray-10);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.hf-schedule__row {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding: 16px 22px;
+}
+.hf-schedule__row + .hf-schedule__row {
+  border-top: 1px solid var(--gray-5);
+}
+.hf-schedule__day {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--gray-90);
+  min-width: 84px;
+}
+.hf-schedule__detail {
+  font-size: 15px;
+  color: var(--gray-50);
+}
+
+/* ---------- Testimonials (structural block) ---------- */
+.hf-testimonials__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+.hf-testimonial {
+  margin: 0;
+  padding: 26px 24px;
+  border: 1px solid var(--gray-10);
+  border-radius: 12px;
+  background: var(--gray-5);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.hf-testimonial__quote {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--gray-80);
+}
+.hf-testimonial__by {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.hf-testimonial__name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gray-90);
+}
+.hf-testimonial__detail {
+  font-size: 13px;
+  color: var(--gray-50);
+}
+
+/* ---------- Contact ---------- */
+.hf-contact__body {
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--gray-60);
+  max-width: 48ch;
+  margin-bottom: 28px;
+}
+.hf-contact__form {
+  display: grid;
+  gap: 14px;
+  max-width: 460px;
+}
+.hf-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.hf-field label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gray-70);
+}
+.hf-field input,
+.hf-field select,
+.hf-field textarea {
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--gray-20);
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: inherit;
+  color: var(--gray-90);
+  background: var(--gray-0);
+}
+.hf-field textarea {
+  height: auto;
+  padding: 12px 14px;
+  line-height: 1.5;
+  resize: vertical;
+}
+.hf-field input:focus,
+.hf-field select:focus,
+.hf-field textarea:focus {
+  outline: none;
+  border-color: var(--wp-blue-50);
+  box-shadow: 0 0 0 3px rgba(56, 88, 233, 0.15);
+}
+.hf-contact__submit {
+  margin-top: 4px;
+  justify-self: start;
+}
+
+/* ---------- Subscribe (composed newsletter block) ---------- */
+.hf-subscribe__body {
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--gray-60);
+  max-width: 48ch;
+  margin-bottom: 28px;
+}
+.hf-subscribe__form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  max-width: 460px;
+}
+.hf-subscribe__input {
+  flex: 1 1 220px;
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--gray-20);
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: inherit;
+  color: var(--gray-90);
+  background: var(--gray-0);
+}
+.hf-subscribe__input:focus {
+  outline: none;
+  border-color: var(--wp-blue-50);
+  box-shadow: 0 0 0 3px rgba(56, 88, 233, 0.15);
+}
+.hf-subscribe__submit {
+  flex: 0 0 auto;
+}
+
+/* ---------- Inline edit ---------- */
+[contenteditable='true'] {
+  cursor: text;
+  border-radius: 4px;
+  box-shadow: 0 0 0 2px rgba(56, 88, 233, 0.35);
+  background: rgba(56, 88, 233, 0.04);
+}
+
+/* ---------- Block toolbar (Round 11 — native DS Toolbar, minimal deltas) ------
+   AUDIT FIX: prior rounds piled ~20 overrides that FOUGHT the native
+   @wordpress/components Toolbar (double borders, per-group box-shadow dividers,
+   36px height/min-width button hacks) and produced a caged, cramped bar. This
+   round STRIPS those and lets the DS Toolbar render in its native visual
+   language — native 48px sizing, native group `border-right` dividers, native
+   button ::before hover pills. We keep ONLY intentional deltas: the float
+   position + reveal, the removed block-type icon, the monochrome ✦, the stacked
+   ↕ mover, and the rounded-8px + soft-shadow WRAPPER aesthetic (the real
+   Gutenberg block-toolbar wrapper look, which the components package alone
+   doesn't ship — so we own it on .hf-tb and flatten only the DS toolbar's own
+   hard border to avoid a double border). */
+.hf-tb {
+  --tb-ink: #1e1e1e;
+  position: absolute;
+  /* Overlap the block's top edge — no dead gap for the pointer to cross. */
+  top: -44px;
+  /* Anchor to the block's LEFT EDGE (padding-box), like real Gutenberg — the bar
+     sits at the far-left of the block, outdented from the content. (Was 56px =
+     content-inset; it belongs at the very edge.) */
+  left: 0;
+  transform: translateY(4px);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  padding: 0;
+  /* Wrapper owns the rounded container + soft shadow (real block-toolbar
+     wrapper look). The inner DS toolbar's own 1px #1e1e1e border is flattened
+     below so we don't get a double border; border-radius here + overflow:hidden
+     clips the DS toolbar's square corners to match the 8px wrapper. */
+  /* Native @wordpress/components toolbar chrome: dark 1px #1e1e1e border, 2px
+     radius, NO soft shadow (flat) — the real DS default, not the block-editor
+     wrapper's rounded+shadow look. */
+  background: #ffffff;
+  border: 1px solid #1e1e1e;
+  border-radius: 2px;
+  box-shadow: none;
+  overflow: hidden;
+  font-family: var(--font-ui);
+  color: var(--tb-ink);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 120ms ease, transform 120ms ease;
+}
+/* Invisible bridge closing the overlap-to-content gap, so the block + toolbar
+   are one continuous pointer surface (no flicker between them). */
+.hf-tb::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: 8px;
+}
+/* Reveal is class-driven (JS hover group + pinned selection), not raw :hover —
+   this is what fixes the flicker. Keep :focus-within for keyboard reachability. */
+.hf-block.is-revealed .hf-tb,
+.hf-block:focus-within .hf-tb,
+.hf-block.is-selected .hf-tb {
+  opacity: 1;
+  pointer-events: auto;
+  /* Float the bar 8px ABOVE the block's top edge — real Gutenberg placement.
+     Previously translateY(0) put the bar's bottom flush on y=0, i.e. exactly on
+     the selected block's blue top border, so the blue line read as slicing
+     through the toolbar. The 8px lift clears it; the ::after bridge (8px) still
+     joins bar↔block as one pointer surface, so no hover flicker. */
+  transform: translateY(-8px);
+}
+/* Flatten ONLY the DS toolbar's own outer border/bg — the .hf-tb wrapper owns
+   the rounded container, border and shadow now (avoids a double border). We do
+   NOT touch the toolbar-group border-right: that IS the native group divider,
+   and letting it render is the whole point of this round. */
+.hf-tb .components-toolbar,
+.hf-tb .components-accessible-toolbar {
+  border: none;
+  background: transparent;
+}
+/* Drag + mover are ONE logical section (block manipulation), so suppress the
+   native divider (border-right) between them by dropping it on the drag group.
+   The native border-right remains on the mover group (→ divider before ✦) and
+   on the ✦ group (→ divider before ⋮). Result: dividers ONLY between the three
+   logical sections [drag+mover] | [✦] | [⋮], not between every button. */
+.hf-tb .components-toolbar-group.hf-tb-gdrag {
+  border-right: none;
+}
+/* All toolbar glyphs monochrome dark, consistent — including the ✦ AI trigger,
+   which used to carry the brand-blue accent. */
+.hf-tb .components-button svg,
+.hf-tb-ai .components-button svg,
+.hf-tb-ai.components-dropdown-menu__toggle svg {
+  color: var(--tb-ink);
+  fill: currentColor;
+}
+/* Mover — its own DS ToolbarGroup turned into a vertical COLUMN so up stacks
+   over down (the real Gutenberg ↕). Group width stays at the 36px button rhythm
+   (NOT a narrow 24px group — that was the old padding bug); the two chevrons are
+   half-height (24px) so together they fill the 48px bar. Merges with the drag
+   group (its own native border-right becomes the divider before ✦). */
+.hf-tb .components-toolbar-group.hf-tb-mover {
+  flex-direction: column;
+  justify-content: center;
+  padding: 0;
+}
+.hf-tb-mover .components-button.hf-tb-move__up,
+.hf-tb-mover .components-button.hf-tb-move__down {
+  min-width: 36px;
+  height: 16px;
+  padding: 0;
+}
+.hf-tb-mover .components-button.hf-tb-move__up svg,
+.hf-tb-mover .components-button.hf-tb-move__down svg {
+  width: 18px;
+  height: 18px;
+}
+/* Kill the native focus/hover PILL (::before) — it stays at the button's full
+   48px frame, so with our 16px half-buttons it drew an oversized blue box around
+   the tiny chevron. Removing it (the chevrons are a compact ↕ pair). */
+.hf-tb-mover .components-button.hf-tb-move__up::before,
+.hf-tb-mover .components-button.hf-tb-move__down::before {
+  display: none;
+}
+
+/* Change-tone HOVER side-flyout. The row is a normal MenuItem with a trailing
+   chevron; on hover its tone options appear as a popover to the right, so the
+   pointer can travel from the row into the flyout without it closing. */
+.hf-tb-tone {
+  position: relative;
+}
+/* The DS DropdownMenu popover clips its content (overflow:auto), which cut off
+   the hover side-flyout at the right edge. Let the AI menu's popover overflow
+   so the flyout escapes. Scoped via popover className; !important beats the DS
+   default. */
+.hf-tb-ai-pop .components-popover__content {
+  overflow: visible !important;
+}
+.hf-tb-tone .components-menu-item__button .components-menu-item__item {
+  /* Push the label left so the trailing chevron sits at the far right edge. */
+  min-width: 140px;
+}
+.hf-tb-tone__flyout {
+  position: absolute;
+  top: -6px;
+  /* Touch the row (no dead gap) so the pointer never leaves the combined
+     row+flyout surface — otherwise a 2px gap would drop the hover mid-travel. */
+  left: 100%;
+  z-index: 1000000;
+  min-width: 168px;
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 2px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  padding: 4px 0;
+}
+/* Invisible bridge over the border seam so travel row→flyout stays hovered. */
+.hf-tb-tone__flyout::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -4px;
+  width: 4px;
+  height: 100%;
+}
+/* "from: …" transparency line under the toolbar (original generating intent) */
+.hf-tbfrom {
+  position: absolute;
+  /* Align with the toolbar (block content-left inset), not the padding-box edge. */
+  left: 56px;
+  top: calc(100% + 5px);
+  font-size: 11px;
+  color: var(--c-text-2);
+  background: #ffffff;
+  padding: 2px 7px;
+  border: 1px solid var(--c-border);
+  border-radius: 6px;
+  max-width: 320px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---------- Right frame: fixed 322px tabbed sidebar, full height ---------- */
+.hf-sidebar {
+  width: var(--hf-chat-w);
+  flex: 0 0 auto;
+  height: 100%;
+  background: #ffffff;
+  border-left: 1px solid var(--c-border);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  font-family: var(--font-ui);
+}
+
+/* Tab row — real DS <TabPanel> strip (its own 2px #6e6e6e active underline +
+   typography), with the × close button pinned to the right of the same row. */
+.hf-sidebar__tabrow {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: stretch;
+  padding: 0 4px 0 4px;
+  border-bottom: 1px solid var(--c-border);
+}
+.hf-sidebar__tabpanel {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+/* The TabPanel renders an empty tabview div under the strip; collapse it so the
+   strip alone drives the row height and our persistent panels render below. */
+.hf-sidebar__tabpanel > [role='tabpanel'] {
+  display: none;
+}
+.hf-sidebar__tabpanel .components-tab-panel__tabs {
+  align-items: center;
+}
+/* Sparkle icon inside the Assistant DS tab button. */
+.hf-sidebar__tabicon {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin-right: 6px;
+  vertical-align: -3px;
+}
+/* Double-class to beat the DS `.components-button` base (min-width/padding +
+   tertiary brand text colour). Small square Gutenberg-style close: 28px box,
+   18px neutral-grey glyph — NOT the oversized brand-blue the DS default gave. */
+.hf-sidebar__close.hf-sidebar__close {
+  align-self: center;
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: none;
+  background: transparent;
+  color: var(--c-text-2);
+  border-radius: 8px;
+  cursor: pointer;
+}
+.hf-sidebar__close.hf-sidebar__close:hover:not(:disabled) {
+  background: var(--c-hover);
+  color: var(--c-text);
+}
+.hf-sidebar__close.hf-sidebar__close svg {
+  display: block;
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+/* Panels fill the remaining height; hidden panels collapse (native [hidden]). */
+.hf-sidebar__panel {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.hf-sidebar__panel[hidden] {
+  display: none;
+}
+
+/* Chat body (the Assistant panel content) fills its tabpanel */
+.hf-chatbody {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- Block panel (persistent detailed mirror of the toolbar) ---------- */
+.hf-blockpanel {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 16px 14px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+/* Empty state — like the real editor: horizontally centered, near the TOP under
+   the tabs (not vertically drifting/centered). */
+.hf-blockpanel--empty {
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 32px;
+}
+.hf-blockpanel__empty {
+  margin: 0;
+  color: var(--c-text-2);
+  font-size: 14px;
+  text-align: center;
+}
+/* ---------- Native block inspector mock (Block tab) ---------- */
+.hf-blockinspector {
+  gap: 0;
+  padding: 0 0 24px;
+}
+
+/* Block header — icon + name + one-line description */
+.hf-bi-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 16px;
+  border-bottom: 1px solid var(--c-border);
+}
+.hf-bi-head__icon {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--c-border);
+  border-radius: 4px;
+  color: #1e1e1e;
+}
+.hf-bi-head__icon svg {
+  display: block;
+}
+.hf-bi-head__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.hf-bi-head__name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--c-text);
+}
+.hf-bi-head__desc {
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--c-text-2);
+}
+
+/* Section (Typography / Background) */
+.hf-bi-sec {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border-bottom: 1px solid var(--c-border);
+}
+.hf-bi-sechead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.hf-bi-sechead__title {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0;
+  color: var(--c-text);
+}
+.hf-bi-sechead__more.hf-bi-sechead__more,
+.hf-bi-sublabelrow__opt.hf-bi-sublabelrow__opt,
+.hf-bi-collapsed__toggle.hf-bi-collapsed__toggle {
+  color: var(--c-text-2);
+}
+
+/* Color / Gradient row */
+.hf-bi-colorrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.hf-bi-colorrow__label {
+  font-size: 13px;
+  color: var(--c-text);
+}
+/* Empty ⊘ swatch look for the DS ColorIndicator */
+.hf-bi-swatch.hf-bi-swatch {
+  width: 24px;
+  height: 24px;
+}
+
+/* FONT SIZE sublabel row */
+.hf-bi-sublabelrow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.hf-bi-sublabel {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--c-text-2);
+}
+.hf-bi-tgc {
+  width: 100%;
+}
+
+/* Collapsed collapsible rows (Dimensions / Border / … / Advanced) */
+.hf-bi-collapsed {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--c-border);
+}
+.hf-bi-collapsed__label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--c-text);
+}
+
+/* ---------- Design tab (static, non-interactive mock) ---------- */
+.hf-design__head {
+  align-items: center;
+  gap: 6px;
+}
+.hf-design__back {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  color: var(--c-text);
+}
+.hf-design__desc {
+  margin: 0;
+  padding: 16px 16px 4px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--c-text-2);
+}
+.hf-design__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--c-border);
+}
+.hf-design__rowicon {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  color: #1e1e1e;
+}
+.hf-design__rowicon svg {
+  display: block;
+}
+.hf-design__rowlabel {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--c-text);
+}
+.hf-design__rowchevron {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  color: var(--c-text-2);
+}
+.hf-design__rowchevron svg {
+  display: block;
+}
+
+/* Thread */
+.hf-chat__thread {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  /* Comfortable breathing room between consecutive messages — the AI action row
+     (thumbs/copy) already sits ~8px under its text, so the inter-message gap must
+     be generous to separate one turn's actions from the next turn's text. */
+  gap: 28px;
+}
+.hf-msg {
+  animation: hf-fade-up 220ms ease;
+}
+.hf-msg--user {
+  display: flex;
+  justify-content: flex-end;
+}
+.hf-msg__bubble {
+  max-width: 88%;
+  padding: 9px 13px;
+  background: var(--c-bubble);
+  color: var(--c-text);
+  border-radius: 18px;
+  font-size: 14px;
+  line-height: 1.6;
+  letter-spacing: -0.154px;
+}
+.hf-msg__text {
+  color: var(--c-text);
+  font-size: 14px;
+  line-height: 1.6;
+  letter-spacing: -0.154px;
+}
+.hf-msg__actions {
+  display: flex;
+  gap: 2px;
+  margin-top: 8px;
+}
+.hf-msg__act {
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border: none;
+  background: transparent;
+  color: #9a9a9a;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.hf-msg__act:hover {
+  background: var(--c-hover);
+  color: var(--c-text-2);
+}
+.hf-msg__act svg {
+  display: block;
+}
+
+/* Thinking dots */
+.hf-thinking {
+  display: inline-flex;
+  gap: 5px;
+  padding: 4px 0;
+}
+.hf-thinking span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #c4c4c4;
+  animation: hf-blink 1.2s infinite ease-in-out;
+}
+.hf-thinking span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.hf-thinking span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+@keyframes hf-blink {
+  0%,
+  80%,
+  100% {
+    opacity: 0.3;
+  }
+  40% {
+    opacity: 1;
+  }
+}
+
+/* Suggested prompts */
+.hf-chat__suggestions {
+  flex: 0 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 0 14px 10px;
+}
+.hf-suggest {
+  padding: 6px 11px;
+  border: 1px solid var(--c-border);
+  border-radius: 999px;
+  background: var(--c-surface);
+  color: var(--c-text);
+  font-family: inherit;
+  font-size: 12.5px;
+  cursor: pointer;
+}
+.hf-suggest:hover:not(:disabled) {
+  background: var(--c-hover);
+}
+.hf-suggest:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* Input card */
+.hf-chat__inputcard {
+  flex: 0 0 auto;
+  margin: 0 14px 14px;
+  border: 1px solid var(--c-border);
+  border-radius: 16px;
+  background: var(--c-input-bg);
+  padding: 10px 12px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.hf-chat__inputcard:focus-within {
+  border-color: #d0d0d0;
+}
+.hf-chat__input {
+  border: none;
+  background: transparent;
+  resize: none;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.55;
+  letter-spacing: -0.154px;
+  color: var(--c-text);
+  outline: none;
+  padding: 0;
+  /* Auto-grow: JS sets height to scrollHeight on input; hide the inner scrollbar
+     so the whole composer grows instead of scrolling internally. ~2-row floor. */
+  box-sizing: border-box;
+  min-height: calc(2 * 14px * 1.55);
+  overflow-y: hidden;
+}
+.hf-chat__input::placeholder {
+  color: var(--c-text-2);
+}
+.hf-chat__inputfooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+/* Bottom-left tool cluster in the chat composer (attach "+", optional Build pill). */
+.hf-chat__inputtools {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+/* "+" add-files affordance — bare borderless icon button (matches the editor
+   composer): no box/border, glyph centered in its hit area. Stubbed. */
+.hf-chat__attach {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--c-text-2);
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+.hf-chat__attach:hover {
+  background: var(--c-hover);
+  color: var(--c-text);
+}
+.hf-chat__attach svg {
+  display: block;
+}
+/* Circular send button. It reuses the DS Button primary, so its own solid-blue
+   background must win over DS AND its empty/disabled state must read MUTED —
+   matching the Intake first-screen send (var(--c-primary) + opacity 0.42), not a
+   flat grey. Selectors are scoped to the input card to beat DS .is-primary. */
+.hf-chat__inputcard .hf-chat__submit,
+.hf-chat__inputcard .hf-chat__submit.is-primary {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: none;
+  border-radius: 50%;
+  background: var(--c-primary);
+  color: #fff;
+  cursor: pointer;
+  transition: background 120ms ease, opacity 120ms ease;
+}
+.hf-chat__inputcard .hf-chat__submit:hover:not(:disabled),
+.hf-chat__inputcard .hf-chat__submit.is-primary:hover:not(:disabled) {
+  background: var(--c-primary-hover);
+  color: #fff;
+}
+/* Empty input → muted/faded (same visual as .ik__submit:disabled), NOT solid blue. */
+.hf-chat__inputcard .hf-chat__submit:disabled,
+.hf-chat__inputcard .hf-chat__submit.is-primary:disabled,
+.hf-chat__inputcard .hf-chat__submit[aria-disabled='true'] {
+  background: var(--c-primary);
+  color: #fff;
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+/* Center the ↑ glyph in the circle (DS wraps the icon in a span with its own
+   line-height/margins — reset them so the arrow is optically centered). */
+.hf-chat__inputcard .hf-chat__submit svg {
+  display: block;
+  margin: 0;
+}
+.hf-chat__inputcard .hf-chat__submit .components-button__icon,
+.hf-chat__inputcard .hf-chat__submit > span {
+  margin: 0;
+  display: grid;
+  place-items: center;
+}
+
+/* ---------- Clarify: placeholder empty-state (compass, center) ---------- */
+/* DS blank-state: compass illustration + title + muted description. Reads as
+   "answer a few questions and I'll draft this", calm — not empty/broken. */
+.hf-blankstate {
+  max-width: 420px;
+  margin: 0 auto;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 56px 24px;
+}
+.hf-blankstate__art {
+  width: 146px;
+  height: 93px;
+  display: block;
+  margin-bottom: 16px;
+}
+.hf-blankstate__title {
+  margin: 0 0 6px;
+  font-family: var(--font-ui);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--c-text-1, var(--gray-90));
+}
+.hf-blankstate__body {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--c-text-2);
+}
+
+/* ---------- Clarify: assistant panel (right) ---------- */
+.hf-clarify {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.hf-clarify__head {
+  flex: 0 0 auto;
+  padding: 14px 14px 0;
+}
+.hf-clarify__sparkle {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  background: #eef0ff;
+  color: #4b3df2;
+}
+.hf-clarify__sparkle svg {
+  display: block;
+}
+.hf-clarify__thread {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 12px 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.hf-clarify__intro {
+  color: var(--c-text);
+  font-size: 14px;
+  line-height: 1.6;
+  letter-spacing: -0.154px;
+}
+/* One question: heading + bordered option cards + Skip. */
+.hf-clarify__q {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: hf-fade-up 220ms ease;
+}
+.hf-clarify__qhead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+.hf-clarify__qhead .hf-msg__text {
+  flex: 1 1 auto;
+}
+/* An answered question renders as an assistant-message + user-bubble pair. */
+.hf-clarify__exchange {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+/* When only the submit button is present, keep it right-aligned. */
+.hf-chat__inputfooter--end {
+  justify-content: flex-end;
+}
+.hf-clarify__options {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--c-border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--c-surface);
+}
+.hf-clarify__opt {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 12px 14px;
+  border: none;
+  background: transparent;
+  color: var(--c-text);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+}
+.hf-clarify__opt + .hf-clarify__opt {
+  border-top: 1px solid var(--c-border);
+}
+.hf-clarify__opt:hover {
+  background: var(--c-hover);
+}
+.hf-clarify__opt:focus-visible {
+  outline: 2px solid var(--c-primary);
+  outline-offset: -2px;
+}
+.hf-clarify__optlabel {
+  flex: 1 1 auto;
+}
+.hf-clarify__skip {
+  align-self: flex-start;
+  padding: 4px 2px;
+  border: none;
+  background: transparent;
+  color: var(--c-text-2);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.hf-clarify__skip:hover {
+  color: var(--c-text);
+  text-decoration: underline;
+}
+.hf-clarify__skip:focus-visible {
+  outline: 2px solid var(--c-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* An answered choice = a persistent, clickable chip (the visible Intent Object). */
+.hf-clarify__chiprow {
+  display: flex;
+  animation: hf-fade-up 220ms ease;
+}
+.hf-clarify__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px 6px 8px;
+  border: 1px solid #c4cdf0;
+  border-radius: 999px;
+  background: #eef2ff;
+  color: var(--c-primary-hover);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.hf-clarify__chip:hover {
+  background: #e3e8ff;
+}
+.hf-clarify__chip:focus-visible {
+  outline: 2px solid var(--c-primary);
+  outline-offset: 2px;
+}
+.hf-clarify__chipcheck {
+  display: inline-grid;
+  place-items: center;
+  color: var(--c-primary);
+}
+.hf-clarify__chipcheck svg {
+  display: block;
+}
+.hf-clarify__chipkey {
+  color: var(--c-text-2);
+}
+.hf-clarify__chipval {
+  color: var(--c-primary-hover);
+  font-weight: 600;
+}
+.hf-clarify__progress {
+  color: var(--c-text-2);
+  font-family: var(--font-ui);
+  font-size: 12px;
+}
+
+
+/* screen-reader only */
+.hf-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* snackbar container */
+.hf-snackbar-slot {
+  position: fixed;
+  left: 24px;
+  bottom: 24px;
+  z-index: 60;
+}
+
+/* ============================================================
+   Step 1 — Intake, restyled to the real WP.com AI-builder landing
+   (centered, EARLY ACCESS pill, sans headline + "AI" selection-box
+   motif, centered prompt card; unification row kept subordinate)
+   ============================================================ */
+.ik {
+  --c-primary: #2d5af2;
+  --c-primary-hover: #244ad6;
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--gray-0);
+  color: var(--gray-90);
+  font-family: var(--font-sans);
+  padding: 48px 24px 132px;
+}
+/* WP masthead — logo top-left + Back button (matches the Goal step's logo) */
+.ik__masthead {
+  position: absolute;
+  top: 32px;
+  left: 32px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.ik__logo {
+  width: 30px;
+  height: 30px;
+  background: #1f1f1f;
+  -webkit-mask: url('/wordpress.svg') center / contain no-repeat;
+  mask: url('/wordpress.svg') center / contain no-repeat;
+}
+/* Plain-text back — chevron + "Back", no pill (real WP [logo] ‹ Back pattern) */
+.ik__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 4px;
+  border: none;
+  background: transparent;
+  color: #1e1e1e;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 120ms ease;
+}
+.ik__back:hover {
+  opacity: 0.7;
+}
+.ik__back:focus-visible {
+  outline: 2px solid var(--c-primary, #2d5af2);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+.ik__center {
+  width: 100%;
+  max-width: 660px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.ik__title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 40px;
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+  color: var(--gray-100);
+  margin-bottom: 32px;
+}
+.ik__prompt {
+  position: relative;
+  width: 100%;
+  max-width: 620px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  border: 1px solid var(--gray-20);
+  border-radius: 18px;
+  background: var(--gray-0);
+  padding: 18px 18px 18px 20px;
+  box-shadow:
+    0 1px 2px rgba(29, 35, 39, 0.05),
+    0 12px 32px rgba(45, 90, 242, 0.08);
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+.ik__prompt:focus-within {
+  border-color: var(--c-primary);
+  box-shadow:
+    0 0 0 3px rgba(45, 90, 242, 0.12),
+    0 12px 32px rgba(45, 90, 242, 0.1);
+}
+.ik__sparkle {
+  flex: 0 0 auto;
+  margin-top: 4px;
+  width: 22px;
+  height: 22px;
+  display: block;
+}
+.ik__input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: none;
+  outline: none;
+  resize: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--gray-90);
+  padding: 2px 0;
+  text-align: left;
+}
+.ik__input::placeholder {
+  color: var(--gray-40);
+}
+/* Reference send button — DS primary Button. Scope over DS (.is-primary) to keep
+   the circular brand-blue shape; empty state reads muted (opacity 0.42). A7 makes
+   the chat composer send match this exactly. */
+.ik__submit.ik__submit,
+.ik__submit.is-primary {
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: none;
+  border-radius: 50%;
+  background: var(--c-primary);
+  color: #fff;
+  cursor: pointer;
+  transition: background 120ms ease, opacity 120ms ease;
+}
+.ik__submit.ik__submit:hover:not(:disabled),
+.ik__submit.is-primary:hover:not(:disabled) {
+  background: var(--c-primary-hover);
+  color: #fff;
+}
+.ik__submit.ik__submit:disabled,
+.ik__submit.is-primary:disabled,
+.ik__submit.is-primary[aria-disabled='true'] {
+  /* DS disabled-primary: brand blue lightened, light arrow — matches
+     .gl__continue:disabled on the Goal step (not neutral gray). */
+  background: var(--c-primary);
+  color: #fff;
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+.ik__submit svg {
+  display: block;
+  margin: 0;
+}
+.ik__submit .components-button__icon,
+.ik__submit > span {
+  margin: 0;
+  display: grid;
+  place-items: center;
+}
+/* Quiet inline escape below the prompt — the whole line recedes. The lead-in is
+   plain muted text (not interactive); only "Skip to the editor." is a faded DS
+   text link. Neither is bold or a bright CTA color. */
+.ik__skiprow {
+  margin-top: 16px;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--gray-40);
+}
+.ik__skiplead {
+  color: var(--gray-40);
+}
+/* Skip-to-editor — DS link Button, but kept MUTED (not the bright DS link blue).
+   Scope over DS .is-link to preserve the quiet grey inline-text look. */
+.ik__skiplink.ik__skiplink,
+.ik__skiplink.is-link {
+  height: auto;
+  padding: 2px 3px;
+  border: none;
+  background: none;
+  font: inherit;
+  font-weight: 400;
+  color: var(--gray-50);
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.ik__skiplink.ik__skiplink:hover:not(:disabled),
+.ik__skiplink.is-link:hover:not(:disabled) {
+  color: var(--gray-70);
+  text-decoration: underline;
+}
+.ik__skiplink.is-link:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(45, 90, 242, 0.28);
+}
+
+/* ============================================================
+   TypePicker — the non-AI detour (design spec).
+   Reuses the Intake chrome (.ik masthead/center) + the Discovery
+   stacked-row look (.dq__row / .dq__rowtext). Top-aligned column
+   (not vertically centered) so the 5-row list reads as a list.
+   ============================================================ */
+.tp {
+  justify-content: flex-start;
+  padding-top: 120px;
+}
+.tp__center {
+  max-width: 560px;
+}
+.tp__title {
+  margin-bottom: 10px;
+}
+.tp__sub {
+  margin: 0 0 28px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--gray-50);
+}
+.tp__rows {
+  width: 100%;
+  text-align: left;
+}
+.tp__row {
+  align-items: center;
+  padding: 16px 18px;
+}
+.tp__rowicon {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gray-70);
+}
+/* Destination stub — same chrome, a single honest routing line. */
+.tp--dest .tp__center {
+  max-width: 520px;
+}
+.tp__destline {
+  margin-bottom: 0;
+}
+/* Method-level alternatives — sticky-bottom card (real WP pattern) */
+.ik__alt {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: min(460px, calc(100vw - 48px));
+  padding: 20px 22px;
+  border: 1px solid var(--gray-20);
+  border-radius: 14px;
+  background: var(--gray-0);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 120ms ease;
+}
+.ik__alt:hover {
+  border-color: var(--gray-30);
+}
+.ik__alttext {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.ik__alttitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gray-90);
+}
+.ik__altsub {
+  font-size: 13px;
+  color: var(--gray-50);
+}
+.ik__altchevron {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  color: var(--gray-40);
+}
+
+/* ============================================================
+   Step 0 — Cold-start goal picker ("What would you like to do?")
+   WP.com masthead, serif headline, 2-up radio-card grid. Only the
+   Website card is enabled; the rest are visible-but-disabled (breadth).
+   ============================================================ */
+.gl {
+  --c-primary: #2d5af2;
+  --c-primary-hover: #244ad6;
+  position: relative;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: var(--gray-0);
+  color: var(--gray-90);
+  font-family: var(--font-sans);
+  padding: 72px 24px 48px;
+}
+.gl__logo {
+  position: absolute;
+  top: 32px;
+  left: 32px;
+  width: 30px;
+  height: 30px;
+  background: #1f1f1f;
+  -webkit-mask: url('/wordpress.svg') center / contain no-repeat;
+  mask: url('/wordpress.svg') center / contain no-repeat;
+}
+.gl__center {
+  width: 100%;
+  max-width: 660px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.gl__title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 40px;
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+  color: var(--gray-100);
+  margin-bottom: 36px;
+}
+.gl__grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 32px;
+}
+.gl__card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 18px 18px;
+  border: 1px solid var(--gray-20);
+  border-radius: 12px;
+  background: var(--gray-0);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 120ms ease, box-shadow 120ms ease, background 120ms ease;
+}
+.gl__card:hover:not(.gl__card--disabled) {
+  border-color: var(--gray-40);
+}
+.gl__card--selected {
+  border-color: var(--c-primary);
+  box-shadow: 0 0 0 2px rgba(45, 90, 242, 0.35);
+  background: #fff;
+}
+.gl__card--disabled {
+  cursor: not-allowed;
+  background: var(--gray-0);
+  opacity: 0.55;
+}
+.gl__radio {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid var(--gray-30);
+  background: var(--gray-0);
+  transition: border-color 120ms ease;
+}
+.gl__card--selected .gl__radio {
+  border-color: var(--c-primary);
+  border-width: 5px;
+}
+/* Multi-select checkbox affordance — square check that fills when selected. */
+.gl__check {
+  flex: 0 0 auto;
+  margin-top: 1px;
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  border: 1.5px solid var(--gray-30);
+  background: var(--gray-0);
+  color: #fff;
+  transition: border-color 120ms ease, background 120ms ease;
+}
+.gl__card--selected .gl__check {
+  border-color: var(--c-primary);
+  background: var(--c-primary);
+}
+.gl__cardtext {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+.gl__cardtitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--gray-90);
+}
+.gl__carddesc {
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--gray-50);
+}
+.gl__continue {
+  min-width: 200px;
+  padding: 12px 28px;
+  border: none;
+  border-radius: 8px;
+  background: var(--c-primary);
+  color: #fff;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+.gl__continue:hover:not(:disabled) {
+  background: var(--c-primary-hover);
+}
+.gl__continue:disabled {
+  /* DS disabled-primary: the brand blue, lightened — still reads as primary. */
+  background: var(--c-primary);
+  color: #fff;
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+@media (max-width: 560px) {
+  .gl__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================================
+   Discovery — standalone full-screen wizard, one question per screen (design spec, revision 2). Real WP.com personal-AI-assistant idiom: sparkle
+   mark, a short conversational lead-in, stacked full-width selectable rows,
+   a visible "N of M" counter. Forward-only (Continue / Skip).
+   ============================================================ */
+/* ============================================================
+   Discovery — full-screen CHAT (design spec, revision 3). A scrollable chat column
+   (prompt + each answered Q&A pair as history) with the CURRENT question rendered
+   as a widget floating above a chat composer at the bottom. NO canvas.
+   ============================================================ */
+.dq {
+  /* Same Figma-matched chat tokens as .hf, so the shared chat message
+     component (hf-msg / Message.tsx) renders identically here: gray rounded
+     user bubble, constrained AI text. Without these the bubble bg/text vars
+     resolve to nothing outside .hf and the messages render as bare full-width text. */
+  --c-primary: #2d5af2;
+  --c-primary-hover: #244ad6;
+  --c-text: #1f1f1f;
+  --c-text-2: #757575;
+  --c-bubble: #e9e9e9;
+  --c-hover: #f2f2f2;
+  --c-border: #e9e9e9;
+  --c-input-bg: #fcfcfc;
+  --c-surface: #ffffff;
+  position: relative;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--gray-0);
+  color: var(--gray-90);
+  font-family: var(--font-sans);
+}
+.dq__masthead {
+  position: absolute;
+  top: 24px;
+  left: 32px;
+  z-index: 2;
+}
+.dq__logo {
+  width: 30px;
+  height: 30px;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  background: #1f1f1f;
+  -webkit-mask: url('/wordpress.svg') center / contain no-repeat;
+  mask: url('/wordpress.svg') center / contain no-repeat;
+  transition: opacity 120ms ease;
+}
+.dq__logo:hover {
+  opacity: 0.7;
+}
+.dq__logo:focus-visible {
+  outline: 2px solid var(--c-primary);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+/* The chat column: history scrolls, the dock (widget + composer) sits at bottom. */
+.dq__chat {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 24px 24px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+.dq__history {
+  /* The dock (question widget + composer) takes its natural height and is shown
+     in FULL — the history is the flexible member: it takes the remaining space
+     and scrolls. min-height:0 so it yields to the dock on short viewports (the
+     messages stay reachable by scrolling) rather than clipping the widget's
+     options. Messages flow TOP-DOWN; the chat reaches the top edge. */
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  /* Share the SAME column as the question widget and composer below — the
+     history, widget and composer all span the dq__chat column so their left/right
+     edges line up. The gray user bubble (max-width 88%) still reads as a chat
+     bubble within it; AI text is constrained to the same measure. Messages flow
+     TOP-DOWN (default flex-start), so with free space the first message sits at
+     the top — never bottom-anchored. */
+  display: flex;
+  flex-direction: column;
+  /* Match the editor thread — generous inter-message spacing so an AI turn's
+     action row is clearly separated from the next message's text. */
+  gap: 28px;
+  padding-top: 8px;
+  padding-bottom: 16px;
+}
+/* First message keeps clearance from the history top edge (and clears the top
+   fade band) even mid-scroll. */
+.dq__history > :first-child {
+  scroll-margin-top: 8px;
+}
+/* The dock — question widget stacked directly above the chat composer. */
+.dq__dock {
+  /* Natural height — the question widget shows ALL its options in full (never an
+     internal scroll). The history above is the flexible one that scrolls. */
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.dq__widget {
+  border: 1px solid var(--gray-20);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 6px 24px rgba(20, 20, 43, 0.06);
+  padding: 16px 18px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.dq__widgethead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.dq__widgetfoot {
+  display: flex;
+  justify-content: flex-end;
+}
+.dq__q {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.dq__question {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 22px;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--gray-100);
+}
+/* "from your description" — the pre-select provenance note. */
+.dq__note {
+  margin: -6px 0 0;
+  font-size: 13px;
+  font-style: italic;
+  color: var(--c-text-2);
+}
+.dq__rows {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+/* Full-width stacked selectable row — the WP-assistant list-choice pattern. */
+.dq__row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--gray-20);
+  border-radius: 10px;
+  background: var(--gray-0);
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color 120ms ease, box-shadow 120ms ease, background 120ms ease;
+}
+.dq__row:hover {
+  border-color: var(--gray-40);
+}
+.dq__row:focus-visible {
+  outline: none;
+  border-color: var(--c-primary);
+  box-shadow: 0 0 0 3px rgba(45, 90, 242, 0.22);
+}
+/* Selected: a single crisp 2px blue border with no double line. The base 1px
+   border turns blue and an inset box-shadow thickens it to 2px from the inside
+   (same edge, same radius) — so there is exactly one blue edge, no outer ring
+   and no corner-clipping between a border and an outer shadow. */
+.dq__row--off {
+  opacity: 0.5;
+  cursor: default;
+}
+.dq__row--off:hover {
+  border-color: var(--c-border);
+  background: transparent;
+}
+.dq__row--on {
+  border-color: var(--c-primary);
+  box-shadow: inset 0 0 0 1px var(--c-primary);
+  background: #fff;
+}
+.dq__radio {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid var(--gray-30);
+  background: var(--gray-0);
+  transition: border-color 120ms ease, border-width 120ms ease;
+}
+.dq__row--on .dq__radio {
+  border-color: var(--c-primary);
+  border-width: 5px;
+}
+.dq__check {
+  flex: 0 0 auto;
+  margin-top: 1px;
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  border: 1.5px solid var(--gray-30);
+  background: var(--gray-0);
+  color: #fff;
+  transition: border-color 120ms ease, background 120ms ease;
+}
+.dq__row--on .dq__check {
+  border-color: var(--c-primary);
+  background: var(--c-primary);
+}
+/* Inline "Write your own…" row (Lovable style) — a selection control + a text
+   input as ONE option. Same height/border/tokens as a preset row; typing
+   auto-selects it. Only rendered on open-ended questions (goals, main goal). */
+.dq__row--other {
+  align-items: center;
+  gap: 0;
+  padding: 0 14px;
+  cursor: default;
+}
+.dq__otherctl {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  /* Single 14px gap between control and input — matches the preset rows' one
+     `gap: 14px`, so the input text lines up with `.dq__rowtitle`. */
+  padding: 12px 0;
+  margin-right: 14px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+.dq__otherctl:focus-visible {
+  outline: none;
+}
+.dq__row--other:focus-within {
+  border-color: var(--c-primary);
+  box-shadow: 0 0 0 3px rgba(45, 90, 242, 0.22);
+}
+.dq__otherinput {
+  flex: 1 1 auto;
+  min-width: 0;
+  align-self: stretch;
+  padding: 12px 0;
+  border: none;
+  background: none;
+  outline: none;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--gray-90);
+}
+.dq__otherinput::placeholder {
+  font-weight: 500;
+  color: var(--gray-50);
+}
+.dq__rowtext {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+.dq__rowtitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--gray-90);
+}
+.dq__rowdesc {
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--gray-50);
+}
+.dq__counter {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--c-text-2);
+}
+/* Skip / Continue are DS Buttons; the bespoke look is preserved by scoping over
+   DS (.is-tertiary / .is-primary) so the pill shape, size and faded-disabled read
+   as before. */
+.dq__skip.dq__skip,
+.dq__skip.is-tertiary {
+  height: auto;
+  padding: 6px 10px;
+  border: none;
+  background: none;
+  color: var(--c-text-2);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: color 120ms ease;
+}
+.dq__skip.dq__skip:hover:not(:disabled),
+.dq__skip.is-tertiary:hover:not(:disabled) {
+  color: var(--gray-90);
+  background: none;
+}
+.dq__continue.dq__continue,
+.dq__continue.is-primary {
+  min-width: 132px;
+  height: auto;
+  padding: 11px 24px;
+  border: none;
+  border-radius: 8px;
+  background: var(--c-primary);
+  color: #fff;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  justify-content: center;
+  transition: background 120ms ease, opacity 120ms ease;
+}
+.dq__continue.dq__continue:hover:not(:disabled),
+.dq__continue.is-primary:hover:not(:disabled) {
+  background: var(--c-primary-hover);
+  color: #fff;
+}
+.dq__continue.dq__continue:disabled,
+.dq__continue.is-primary:disabled,
+.dq__continue.is-primary[aria-disabled='true'] {
+  background: var(--c-primary);
+  color: #fff;
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+/* The discovery composer reuses the editor's DS chat composer classes verbatim
+   (.hf-chat__inputcard / .hf-chat__input / .hf-chat__submit) — no bespoke
+   composer styling here, so it stays identical to the editor chat input. Only
+   drop the editor rail's horizontal margin so it aligns with the widget in the dock. */
+.dq__dock .hf-chat__inputcard {
+  margin: 0;
+}
+@media (max-width: 560px) {
+  .dq__chat {
+    padding-top: 72px;
+  }
+  .dq__continue {
+    flex: 1 1 auto;
+  }
+}
+
+/* ============================================================
+   B7 / B8 — discovery motion. One motion language: things that JOIN the
+   conversation move UP into the history; the ACTIVE input lives at the bottom
+   and rises IN from below. All disabled under prefers-reduced-motion.
+   ============================================================ */
+
+/* B7 — Intake exit: the whole screen fades and the prompt card glides DOWN,
+   reading as "the input is heading to the bottom" (it becomes the composer). */
+.ik {
+  transition: opacity 240ms ease;
+}
+.ik--leaving {
+  opacity: 0;
+  pointer-events: none;
+}
+.ik--leaving .ik__prompt {
+  animation: ik-prompt-down 260ms ease-in forwards;
+}
+.ik--leaving .ik__title,
+.ik--leaving .ik__skiprow,
+.ik--leaving .ik__alt {
+  opacity: 0;
+  transition: opacity 160ms ease;
+}
+@keyframes ik-prompt-down {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(72px);
+    opacity: 0;
+  }
+}
+
+/* B7 — each seeded message fades UP as it is revealed (staggered from the top). */
+.dq__reveal {
+  animation: dq-msg-in 260ms ease-out both;
+}
+@keyframes dq-msg-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* B7 — the dock (widget + composer) arrives from below and settles up into place;
+   `--in` is added once the messages have staggered in. */
+.dq__dock {
+  transform: translateY(18px);
+  opacity: 0;
+  transition:
+    transform 300ms cubic-bezier(0.22, 0.61, 0.36, 1),
+    opacity 300ms ease-out;
+}
+.dq__dock--in {
+  transform: none;
+  opacity: 1;
+}
+
+/* B8 — the incoming question rises IN from below into the widget slot. */
+.dq__widget--enter {
+  animation: dq-widget-up-in 300ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+@keyframes dq-widget-up-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* B8 — the answered widget flies UP and dissolves toward the history above,
+   landing where its new Q&A message appears. */
+.dq__widget--up {
+  animation: dq-widget-fly-up 200ms ease-in forwards;
+  pointer-events: none;
+}
+@keyframes dq-widget-fly-up {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-26px) scale(0.97);
+  }
+}
+
+/* Reduced motion — hand off instantly, no staggering, no gliding. */
+@media (prefers-reduced-motion: reduce) {
+  .ik,
+  .ik--leaving,
+  .ik--leaving .ik__prompt,
+  .ik--leaving .ik__title,
+  .ik--leaving .ik__skiprow,
+  .ik--leaving .ik__alt,
+  .dq__reveal,
+  .dq__dock,
+  .dq__dock--in,
+  .dq__widget--enter,
+  .dq__widget--up {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}
+
+/* Full-screen BLOCKING generation — centers the serif phrase + bar, WP masthead. */
+.dq--gen {
+  align-items: center;
+  justify-content: center;
+}
+
+/* ============================================================
+   Step 2 — Generation screen (real WP.com form): full-bleed white,
+   centered serif phrase cycling with a fade, thin blue progress bar.
+   ============================================================ */
+/* ---------- In-frame generation loader (lives in the canvas slot) ---------- */
+/* Same serif phrase + thin blue bar as the retired full-screen splash, but
+   centered inside the canvas white bg — the editor shell stays visible. */
+.hf-gen {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  background: var(--gray-0);
+  padding: 64px 24px;
+  box-sizing: border-box;
+}
+.hf-gen__phrase {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 38px;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: #1f1f1f;
+  text-align: center;
+  animation: gen-fade 480ms ease;
+}
+/* DS ProgressBar — constrain to the retired custom bar's centered footprint;
+   the native track is intentionally thinner (~1px, accepted in review). */
+.hf-gen__progress {
+  width: 360px;
+  max-width: 80%;
+}
+/* DS ProgressBar defaults to a dark/near-black indicator; the real WP.com loader
+   is a BRAND-BLUE fill on a light track. The DS bar uses emotion-generated class
+   names (…-Indicator / …-Track), so target by substring, scoped to this bar only. */
+.hf-gen__progress [class*='Indicator'] {
+  background-color: var(--c-primary);
+}
+.hf-gen__progress [class*='Track'] {
+  background-color: rgba(20, 20, 43, 0.08);
+}
+
+@keyframes gen-fade {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+
+/* ============================================================
+   Step 4 — Publish paywall (the publish spec). Real WP.com publish/
+   domain/plan layout as the constant: masthead + Back, centered
+   column, suggestion-first domain card, plan grid, confirmation.
+   Value-first; the free path stays legible and never buried.
+   ============================================================ */
+.pb {
+  min-height: 100vh;
+  background: var(--gray-5);
+  color: var(--gray-90);
+  font-family: var(--font-sans);
+  padding: 24px 24px 96px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.pb__masthead {
+  width: 100%;
+  max-width: 1040px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 8px 4px 0;
+}
+.pb__logo {
+  width: 30px;
+  height: 30px;
+  background: #1f1f1f;
+  -webkit-mask: url('/wordpress.svg') center / contain no-repeat;
+  mask: url('/wordpress.svg') center / contain no-repeat;
+}
+.pb__back.pb__back,
+.pb__back.is-tertiary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: auto;
+  padding: 4px;
+  border: none;
+  background: transparent;
+  color: #1e1e1e;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 120ms ease;
+}
+.pb__back.pb__back:hover:not(:disabled),
+.pb__back.is-tertiary:hover:not(:disabled) {
+  opacity: 0.7;
+  background: transparent;
+  color: #1e1e1e;
+}
+.pb__back .components-button__icon,
+.pb__back svg {
+  margin: 0;
+}
+
+.pb__body {
+  width: 100%;
+  max-width: 720px;
+  margin-top: 48px;
+}
+
+/* Shared headline / sub */
+.pb__title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 40px;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  color: var(--gray-90);
+}
+.pb__title--center {
+  text-align: center;
+}
+.pb__sub {
+  margin-top: 12px;
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--gray-50);
+}
+.pb__sub--center {
+  text-align: center;
+  max-width: 560px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.pb__domain {
+  font-weight: 600;
+  color: var(--gray-90);
+}
+
+/* B2 — value-first header + preview thumbnail */
+.pb__hero {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 28px;
+  align-items: center;
+}
+.pb__herotext {
+  min-width: 0;
+}
+.pb__assurance {
+  margin-top: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #eef8f0;
+  border: 1px solid #cce9d3;
+  color: #14622a;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+.pb__assurance svg {
+  flex: none;
+  fill: #1a7a37;
+}
+
+/* Preview — a real, static, scaled render of the draft (not a fake screenshot) */
+.pb__preview {
+  flex: none;
+}
+.pb__previewframe {
+  width: 240px;
+  height: 168px;
+  border-radius: 10px;
+  border: 1px solid var(--gray-20);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  background: var(--gray-0);
+}
+.pb__previewpage {
+  width: 720px;
+  transform: scale(0.3333);
+  transform-origin: top left;
+}
+.pb__previewnav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 22px;
+  border-bottom: 1px solid var(--gray-10);
+}
+.pb__previewbrand {
+  font-family: var(--font-display);
+  font-size: 20px;
+  color: var(--gray-90);
+}
+.pb__previewlinks {
+  display: flex;
+  gap: 18px;
+  font-size: 13px;
+  color: var(--gray-50);
+}
+.pb__previewhero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  align-items: center;
+  padding: 28px 22px;
+}
+.pb__previewcopy {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.pb__previewkicker {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--wp-blue-50);
+  font-weight: 600;
+}
+.pb__previewheadline {
+  font-family: var(--font-display);
+  font-size: 34px;
+  line-height: 1.05;
+  color: var(--gray-90);
+}
+.pb__previewsub {
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--gray-60);
+}
+.pb__previewcta {
+  margin-top: 6px;
+  align-self: flex-start;
+  padding: 9px 18px;
+  border-radius: 6px;
+  background: var(--wp-blue-50);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+}
+.pb__previewimg {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+/* Three parallel option blocks — ONE consistent card standard.
+   Same white card, same border, same rhythm, so they read as three parallel
+   choices. Page bg is grey (--gray-5); the cards are white (--gray-0). */
+.pb__options {
+  margin-top: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+/* Card chrome = the DS Card defaults, which is also what Calypso's
+   domain-suggestion card uses: white surface, 8px radius (CONFIG.radiusLarge),
+   and a hairline 1px RING via box-shadow (CONFIG.surfaceBorderColor) — not a
+   CSS border, and no elevation. CardBody padding is Calypso's 24px at a large
+   container width. */
+.pb__option.pb__option {
+  border: none;
+  border-radius: 8px;
+  background: var(--gray-0);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+.pb__option .components-card__body {
+  padding: 24px;
+}
+/* VStack spacing={3} — badge over the name. */
+.pb__optiontop {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+/* Ported from Calypso's `.domain-suggestion-badge`: 24px tall, 8px inline
+   padding, 2px radius, hairline ring, transparent fill, 12px/1 text. */
+.pb__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 24px;
+  padding-inline: 8px;
+  box-sizing: border-box;
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+  font-size: 12px;
+  line-height: 1;
+  color: var(--gray-80);
+}
+.pb__optionname {
+  font-family: var(--font-sans);
+  font-size: 32px;
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--gray-90);
+  word-break: break-all;
+}
+/* HStack[price, cta] — the CTA is centred against the price row, and the row
+   sits at the bottom of the card (Calypso: `.domain-suggestion-cta { margin-top:
+   auto }`). Centring the CTA against the whole card is NOT what the DS does. */
+.pb__optionbottom {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+.pb__priceblock {
+  min-width: 0;
+}
+.pb__pricerow {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 20px;
+}
+.pb__pricewas {
+  color: var(--gray-50);
+  text-decoration: line-through;
+}
+/* Calypso's --domain-search-promotional-price-color. */
+.pb__pricenow {
+  color: #048015;
+}
+/* Their price sub-text slot. Ours also carries the compressed §3.3 disclosure —
+   both year-two costs stay in the same visual field as the "free first year"
+   claim, just no longer as a paragraph. */
+.pb__pricecaption {
+  margin-top: 4px;
+  max-width: 52ch;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--gray-50);
+}
+.pb__optionbtn.pb__optionbtn {
+  height: 44px;
+  padding: 0 22px;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 600;
+}
+.pb__optionbtn.is-primary {
+  background: var(--wp-blue-50);
+  color: #fff;
+}
+.pb__optionbtn.is-primary:hover:not(:disabled) {
+  background: var(--wp-blue-hover);
+  color: #fff;
+}
+.pb__optionbtn.is-secondary {
+  border: 1px solid var(--gray-20);
+  background: var(--gray-0);
+  color: var(--gray-80);
+  box-shadow: none;
+}
+.pb__optionbtn.is-secondary:hover:not(:disabled) {
+  background: var(--gray-5);
+  border-color: var(--gray-30);
+  color: var(--gray-90);
+}
+.pb__searchlink.pb__searchlink {
+  margin-top: 12px;
+}
+.pb__searchlink.pb__searchlink,
+.pb__searchlink.is-link {
+  color: var(--wp-blue-50);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  box-shadow: none;
+}
+.pb__searchlink.is-link:hover {
+  color: var(--wp-blue-hover);
+  text-decoration: underline;
+}
+
+/* --- Plan grid --- */
+.pb__plan {
+  width: 100%;
+}
+.pb__plangrid {
+  margin-top: 28px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+.pb__plancard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 22px 20px 20px;
+  border: 1px solid var(--gray-20);
+  border-radius: 12px;
+  background: var(--gray-0);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+.pb__plancard:hover {
+  border-color: var(--gray-30);
+}
+.pb__plancard.is-recommended {
+  border-color: var(--wp-blue-light);
+}
+.pb__plancard.is-selected {
+  border-color: var(--wp-blue-50);
+  box-shadow: 0 0 0 2px rgba(56, 88, 233, 0.2);
+}
+.pb__plancard:focus-visible {
+  outline: 2px solid var(--wp-blue-50);
+  outline-offset: 2px;
+}
+.pb__planbadge {
+  position: absolute;
+  top: -11px;
+  left: 20px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--wp-blue-50);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+.pb__planname {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--gray-90);
+}
+.pb__planprice {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+  font-family: var(--font-display);
+  font-size: 34px;
+  line-height: 1;
+  color: var(--gray-90);
+}
+.pb__planper {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--gray-50);
+}
+.pb__planbilled {
+  font-size: 13px;
+  color: var(--gray-50);
+}
+.pb__plantagline {
+  margin-top: 4px;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--gray-60);
+}
+.pb__planfeatures {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  list-style: none;
+  padding: 0;
+}
+.pb__planfeatures li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--gray-70);
+}
+.pb__planfeatures svg {
+  flex: none;
+  fill: var(--green-50);
+}
+.pb__planbillingnote {
+  margin-top: 18px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--gray-50);
+}
+.pb__plancta {
+  margin-top: 14px;
+  display: flex;
+  justify-content: center;
+}
+.pb__plancta .components-button.is-primary {
+  height: 44px;
+  padding: 0 28px;
+  border-radius: 6px;
+  background: var(--wp-blue-50);
+  font-size: 15px;
+  font-weight: 600;
+}
+.pb__plancta .components-button.is-primary:hover:not(:disabled) {
+  background: var(--wp-blue-hover);
+}
+
+/* --- Confirmation + stub --- */
+.pb__confirm,
+.pb__stub {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding-top: 24px;
+}
+.pb__confirmcheck {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 999px;
+  background: #eef8f0;
+  border: 1px solid #cce9d3;
+  margin-bottom: 20px;
+}
+.pb__confirmcheck svg {
+  fill: #1a7a37;
+}
+.pb__stubbadge {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  background: var(--wp-blue-tint);
+  border: 1px solid var(--wp-blue-light);
+  margin-bottom: 18px;
+}
+.pb__stubbadge svg {
+  fill: var(--wp-blue-50);
+}
+.pb__confirmactions {
+  margin-top: 26px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.pb__confirmactions .components-button.is-primary {
+  height: 44px;
+  padding: 0 22px;
+  border-radius: 6px;
+  background: var(--wp-blue-50);
+  font-size: 15px;
+  font-weight: 600;
+}
+.pb__confirmactions .components-button.is-primary:hover:not(:disabled) {
+  background: var(--wp-blue-hover);
+}
+.pb__confirmactions .components-button.is-secondary {
+  height: 44px;
+  padding: 0 22px;
+  border-radius: 6px;
+  border: 1px solid var(--gray-20);
+  color: var(--gray-80);
+  font-size: 15px;
+  font-weight: 600;
+  box-shadow: none;
+}
+.pb__stublabel {
+  margin-top: 18px;
+  font-size: 13px;
+  color: var(--gray-40);
+  font-style: italic;
+}
+/* Confirmation site URL — a DS-styled clickable link, not bold static text */
+.pb__confirmurl.pb__confirmurl,
+.pb__confirmurl.is-link {
+  height: auto;
+  padding: 0;
+  font-size: inherit;
+  font-weight: 600;
+  color: var(--wp-blue-50);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  box-shadow: none;
+  vertical-align: baseline;
+}
+.pb__confirmurl.is-link:hover {
+  color: var(--wp-blue-hover);
+}
+
+@media (max-width: 640px) {
+  .pb__hero {
+    grid-template-columns: 1fr;
+  }
+  .pb__preview {
+    order: -1;
+  }
+  .pb__plangrid {
+    grid-template-columns: 1fr;
+  }
+  .pb__title {
+    font-size: 32px;
+  }
+}
+
+/* ---------- Pages of the draft (any page other than Home) ---------- */
+.hf-page {
+  padding: 56px;
+}
+.hf-page__title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 44px;
+  letter-spacing: -0.02em;
+  color: var(--gray-100);
+  margin-bottom: 16px;
+}
+.hf-page__lead {
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--gray-60);
+  max-width: 48ch;
+  margin-bottom: 40px;
+}
+.hf-page .hf-h2 {
+  margin-top: 40px;
+}
+.hf-page__stub {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--gray-50);
+  max-width: 52ch;
+}
+
+/* ---------- Page links inside the assistant's opening message ----------
+   Inline DS links, not chips: the sentence mentions pages, it is not a
+   navigation control, so no selected state and no pill chrome. */
+.hf-pagelink.hf-pagelink,
+.hf-pagelink.is-link {
+  /* The DS Button is inline-flex, which makes it a box the line can break
+     against — the comma after a link would wrap onto the next line. */
+  display: inline;
+  height: auto;
+  padding: 0;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  color: var(--wp-blue-50);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  box-shadow: none;
+  vertical-align: baseline;
+}
+.hf-pagelink.is-link:hover {
+  color: var(--wp-blue-hover);
+}
+
+/* ---------- Command palette ----------
+   DS primitives (Modal + SearchControl + Composite + TextHighlight); the
+   proportions, spacing and states are ported from Gutenberg
+   packages/commands/src/components/style.scss. The palette renders in a portal
+   OUTSIDE .hf, so it reads the :root tokens, not the .hf-scoped ones. */
+.hf-cmd__overlay {
+  align-items: flex-start;
+}
+.hf-cmd.hf-cmd {
+  margin-top: 10vh;
+  font-family: var(--font-sans);
+}
+.hf-cmd .components-modal__content {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+/* Header geometry from packages/commands/src/components/style.scss: the header
+   itself carries only side padding (0 $grid-unit-20), the 8px gap sits between
+   the icon and the field, and the field's own 12px vertical padding makes the
+   48px row. The input's side padding is 4px, so the text starts right after the
+   icon instead of being inset by the field's chrome. */
+.hf-cmd__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--gray-10);
+}
+/* Bare input, styled to the palette's own values: 15px/24px text with 12px
+   vertical padding makes the 48px row; 4px side padding so the text sits right
+   after the icon. */
+.hf-cmd__searchicon {
+  flex: none;
+  color: var(--gray-60);
+}
+.hf-cmd__search {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 12px 4px;
+  margin: 0;
+  color: var(--gray-90);
+  font-family: inherit;
+  font-size: 15px;
+  line-height: 24px;
+}
+.hf-cmd__search::placeholder {
+  color: var(--gray-60);
+}
+
+.hf-cmd__list {
+  max-height: min(328px, calc(70vh - 48px));
+  overflow-y: auto;
+  padding: 0 8px 4px;
+  scroll-padding-top: 8px;
+  scroll-padding-bottom: 8px;
+}
+.hf-cmd__grouplabel {
+  margin-top: 8px;
+  padding: 8px 16px;
+  line-height: 16px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--gray-90);
+}
+.hf-cmd__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  /* Real palette: 32px inner row + 4px outer spacing, 2px radius. */
+  min-height: 32px;
+  margin: 4px 0;
+  padding: 4px 16px 4px 8px;
+  border: none;
+  border-radius: 2px;
+  background: transparent;
+  color: var(--gray-90);
+  font-family: inherit;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+}
+.hf-cmd__item[data-active-item] {
+  background: var(--wp-blue-50);
+  color: var(--gray-0);
+}
+.hf-cmd__itemicon {
+  display: flex;
+  flex: 0 0 auto;
+  color: currentColor;
+}
+.hf-cmd__itemicon svg {
+  fill: currentColor;
+}
+.hf-cmd__itemlabel {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.hf-cmd__itemlabel mark {
+  background: none;
+  color: inherit;
+  font-weight: 600;
+}
+.hf-cmd__itemtag {
+  flex: 0 0 auto;
+  margin-left: auto;
+  padding-left: 24px;
+  color: var(--gray-50);
+  font-size: 13px;
+  text-align: right;
+}
+.hf-cmd__item[data-active-item] .hf-cmd__itemtag {
+  color: rgba(255, 255, 255, 0.8);
+}
+.hf-cmd__empty {
+  padding: 16px 0 40px;
+  text-align: center;
+  color: var(--gray-90);
+  font-size: 13px;
+}
